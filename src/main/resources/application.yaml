@@ -2,10 +2,15 @@ spring:
   application:
     name: server
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
+    # Thêm tham số currentSchema và quan trọng nhất là gán múi giờ trực tiếp vào URL
+    url: jdbc:postgresql://localhost:5432/postgres?options=-c%20timezone=Asia/Ho_Chi_Minh
     username: postgres
     password: 1Uch@mch0td@!
     driver-class-name: org.postgresql.Driver
+  # Cấu hình Jackson để ResponseWrapperAdvice format thời gian đúng chuẩn
+  jackson:
+    time-zone: Asia/Ho_Chi_Minh
+    date-format: yyyy-MM-dd HH:mm:ss
   jpa:
     hibernate:
       ddl-auto: update
@@ -15,13 +20,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         highlight_sql: true
+        # Đảm bảo Hibernate gửi đúng múi giờ cho PostgreSQL
+        jdbc.time_zone: Asia/Ho_Chi_Minh
 springdoc:
   swagger-ui:
-    # Đường dẫn truy cập giao diện Swagger
     path: /swagger-ui.html
     disable-swagger-default-url: true
-    # Sắp xếp các API theo thứ tự bảng chữ cái hoặc phương thức (alpha)
     operations-sorter: alpha
   api-docs:
-    # Đường dẫn file JSON đặc tả API
     path: /v3/api-docs

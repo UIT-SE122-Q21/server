@@ -1,6 +1,7 @@
 package edu.uit.se122.server.promotion.internal.service;
 
-import edu.uit.se122.server.promotion.PromotionDTO;
+import edu.uit.se122.server.promotion.internal.dto.PromotionReqDTO;
+import edu.uit.se122.server.promotion.internal.dto.PromotionResDTO;
 import edu.uit.se122.server.promotion.internal.entity.Promotion;
 import edu.uit.se122.server.promotion.internal.entity.PromotionDetail;
 import edu.uit.se122.server.promotion.internal.repository.PromotionDetailRepository;
@@ -20,7 +21,7 @@ public class PromotionService {
     private final PromotionDetailRepository detailRepository;
 
     // CREATE
-    public PromotionDTO create(PromotionDTO dto) {
+    public PromotionResDTO create(PromotionReqDTO dto) {
         Promotion promotion = new Promotion();
         updateEntity(promotion, dto);
         Promotion saved = promotionRepository.save(promotion);
@@ -33,31 +34,31 @@ public class PromotionService {
                 detail.setProductId(pid); // Chỉ lưu ID theo chuẩn Modulith
                 return detail;
             }).collect(Collectors.toList());
-            detailRepository.saveAll(details);
+            List<PromotionDetail> savedDetails = detailRepository.saveAll(details);
+            saved.setDetails(savedDetails);
         }
-
-        dto.setPromotionId(saved.getPromotionId());
-        return dto;
+        return mapToDTO(saved);
     }
 
     // READ ALL
-    public List<PromotionDTO> getAll() {
+    public List<PromotionResDTO> getAll() {
         return promotionRepository.findAll().stream().map(this::mapToDTO).toList();
     }
 
     // READ ONE
-    public PromotionDTO getById(Integer id) {
+    public PromotionResDTO getById(Integer id) {
         return promotionRepository.findById(id).map(this::mapToDTO)
                 .orElseThrow(() -> new RuntimeException("Promotion not found"));
     }
 
     // UPDATE
-    public PromotionDTO update(Integer id, PromotionDTO dto) {
+    public PromotionResDTO update(Integer id, PromotionReqDTO dto) {
         Promotion promotion = promotionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Promotion not found"));
         updateEntity(promotion, dto);
         promotionRepository.save(promotion);
-        return dto;
+        return promotionRepository.findById(id).map(this::mapToDTO)
+                .orElseThrow(() -> new RuntimeException("Promotion not found"));
     }
 
     // DELETE
@@ -66,17 +67,15 @@ public class PromotionService {
     }
 
     // Helper mappers
-    private void updateEntity(Promotion entity, PromotionDTO dto) {
+    private void updateEntity(Promotion entity, PromotionReqDTO dto) {
         entity.setPromotionName(dto.getPromotionName());
         entity.setDescription(dto.getDescription());
         entity.setDiscountType(dto.getDiscountType());
         entity.setDiscountValue(dto.getDiscountValue());
-        entity.setStartDate(dto.getStartDate());
-        entity.setEndDate(dto.getEndDate());
     }
 
-    private PromotionDTO mapToDTO(Promotion entity) {
-        PromotionDTO dto = new PromotionDTO();
+    private PromotionResDTO mapToDTO(Promotion entity) {
+        PromotionResDTO dto = new PromotionResDTO();
         dto.setPromotionId(entity.getPromotionId());
         dto.setPromotionName(entity.getPromotionName());
         dto.setDescription(entity.getDescription());

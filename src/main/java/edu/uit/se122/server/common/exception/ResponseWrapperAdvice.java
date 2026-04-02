@@ -8,13 +8,23 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-// @RestControllerAdvice
+@RestControllerAdvice
 public class ResponseWrapperAdvice implements ResponseBodyAdvice<Object> {
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        // Chỉ wrap các kết quả trả về từ RestController và không phải là chính nó (tránh wrap 2 lần)
-        return !returnType.getParameterType().equals(ApiResponse.class);
+        // 1. Tránh wrap lại chính ApiResponse
+        if (returnType.getParameterType().equals(ApiResponse.class)) {
+            return false;
+        }
+
+        // 2. QUAN TRỌNG: Kiểm tra class đang xử lý có thuộc package của Swagger/SpringDoc không
+        String packageName = returnType.getContainingClass().getPackageName();
+        if (packageName.contains("org.springdoc") || packageName.contains("swagger")) {
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -22,10 +32,11 @@ public class ResponseWrapperAdvice implements ResponseBodyAdvice<Object> {
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request, ServerHttpResponse response) {
 
-        // Nếu body là null hoặc đã là ApiResponse (từ ExceptionHandler) thì giữ nguyên
-        if (body instanceof ApiResponse) return body;
+        // Nếu body là null, String (để tránh lỗi cast sang JSON), hoặc đã là ApiResponse thì giữ nguyên
+        if (body == null || body instanceof ApiResponse || body instanceof String) {
+            return body;
+        }
 
-        // Tự động bao bọc dữ liệu vào cấu hình chuẩn
         return ApiResponse.success(body);
     }
 }
