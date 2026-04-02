@@ -1,8 +1,11 @@
 package edu.uit.se122.server.booking.internal.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.uit.se122.server.common.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,6 +14,8 @@ import java.util.List;
 @Entity
 @Table(name = "CourtOrder")
 @Data
+@ToString(exclude = {"courtOrderDetails", "productOrderDetails", "courtOrderInvoices", "productOrderInvoices"})
+@EqualsAndHashCode(exclude = {"courtOrderDetails", "productOrderDetails", "courtOrderInvoices", "productOrderInvoices"})
 public class CourtOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +38,18 @@ public class CourtOrder {
 
     // Navigation: Chi tiết các sân được đặt trong đơn này
     @OneToMany(mappedBy = "courtOrder", cascade = CascadeType.ALL)
-    private List<CourtOrderDetail> details;
+    @JsonManagedReference(value = "courtOrderDetails")
+    private List<CourtOrderDetail> courtOrderDetails;
+
+    @OneToMany(mappedBy = "courtOrder", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "productOrderDetails")
+    private List<ProductOrderDetail> productOrderDetails;
+
+    @OneToOne(mappedBy = "courtOrder", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "courtOrderInvoices")
+    private CourtOrderInvoice courtOrderInvoices;
+
+    @OneToOne(mappedBy = "courtOrder", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "productOrderInvoices")
+    private ProductOrderInvoice productOrderInvoices;
 }

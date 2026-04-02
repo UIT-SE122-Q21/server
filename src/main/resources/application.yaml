@@ -14,3 +14,14 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+        highlight_sql: true
+springdoc:
+  swagger-ui:
+    # Đường dẫn truy cập giao diện Swagger
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
+    # Sắp xếp các API theo thứ tự bảng chữ cái hoặc phương thức (alpha)
+    operations-sorter: alpha
+  api-docs:
+    # Đường dẫn file JSON đặc tả API
+    path: /v3/api-docs

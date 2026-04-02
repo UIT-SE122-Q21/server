@@ -1,6 +1,8 @@
 package edu.uit.se122.server.identity.internal.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.uit.se122.server.common.enums.AdminRole;
+import edu.uit.se122.server.inventory.internal.entity.Product;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -24,7 +26,7 @@ public class Administrator {
     @Enumerated(EnumType.STRING)
     private AdminRole role;
 
-    // Navigation: Một Admin có thể lập nhiều lịch làm việc
-    @OneToMany(mappedBy = "admin")
-    private List<EmployeeSchedule> schedules;
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "employeeSchedules")
+    private List<EmployeeSchedule> employeeSchedules;
 }

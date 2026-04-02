@@ -1,15 +1,22 @@
 package edu.uit.se122.server.social.internal.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import edu.uit.se122.server.booking.internal.entity.CourtOrderDetail;
 import edu.uit.se122.server.common.enums.PlanStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Together")
 @Data
+@ToString(exclude = "chat")
+@EqualsAndHashCode(exclude = "chat")
 public class Together {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,4 +38,8 @@ public class Together {
     private String memberId;
 
     private Integer courtOrderId;
+
+    @OneToOne(mappedBy = "together", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "chat")
+    private Chat chat;
 }

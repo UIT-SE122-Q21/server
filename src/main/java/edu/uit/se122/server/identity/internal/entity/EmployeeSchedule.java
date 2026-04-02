@@ -1,5 +1,6 @@
 package edu.uit.se122.server.identity.internal.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import edu.uit.se122.server.booking.internal.entity.CourtOrder;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -23,5 +24,6 @@ public class EmployeeSchedule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adminId")
-    private Administrator adminId;
+    @JsonBackReference(value = "employeeSchedules")
+    private Administrator admin;
 }

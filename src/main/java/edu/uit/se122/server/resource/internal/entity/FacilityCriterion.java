@@ -1,14 +1,19 @@
 package edu.uit.se122.server.resource.internal.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "FacilityCriteria")
+@Table(name = "FacilityCriterion")
 @Data
-public class FacilityCriteria {
+@ToString(exclude = "category")
+@EqualsAndHashCode(exclude = "category")
+public class FacilityCriterion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer criteriaId;
@@ -19,5 +24,6 @@ public class FacilityCriteria {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FacilityCategoryId")
+    @JsonBackReference(value = "criteria")
     private FacilityCategory category;
 }

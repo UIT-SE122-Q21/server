@@ -1,5 +1,6 @@
 package edu.uit.se122.server.inventory.internal.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.uit.se122.server.common.enums.ImportStatus;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -27,5 +28,6 @@ public class ProductImport {
 
     @ManyToOne
     @JoinColumn(name = "ProductId")
+    @JsonIgnore
     private Product product;
 }
