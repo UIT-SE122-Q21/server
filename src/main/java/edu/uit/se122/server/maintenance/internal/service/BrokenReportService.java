@@ -1,7 +1,6 @@
 package edu.uit.se122.server.maintenance.internal.service;
 
-import edu.uit.se122.server.maintenance.internal.dto.BrokenReportReqDTO;
-import edu.uit.se122.server.maintenance.internal.dto.BrokenReportResDTO;
+import edu.uit.se122.server.maintenance.BrokenReportContract;
 import edu.uit.se122.server.maintenance.internal.entity.BrokenReport;
 import edu.uit.se122.server.maintenance.internal.repository.BrokenReportRepository;
 import jakarta.transaction.Transactional;
@@ -17,16 +16,16 @@ import java.util.List;
 public class BrokenReportService {
     private final BrokenReportRepository brokenReportRepository;
 
-    public List<BrokenReportResDTO> getAll() {
+    public List<BrokenReportContract.Response> getAll() {
         return brokenReportRepository.findAll().stream().map(this::mapToDTO).toList();
     }
 
-    public BrokenReportResDTO getById(Integer id) {
+    public BrokenReportContract.Response getById(Integer id) {
         return brokenReportRepository.findById(id).map(this::mapToDTO)
                 .orElseThrow(() -> new RuntimeException("Report not found"));
     }
 
-    public BrokenReportResDTO create(BrokenReportReqDTO dto) throws IOException {
+    public BrokenReportContract.Response create(BrokenReportContract.Request dto) throws IOException {
         BrokenReport report = new BrokenReport();
         updateEntity(report, dto);
         BrokenReport saved = brokenReportRepository.save(report);
@@ -34,7 +33,7 @@ public class BrokenReportService {
         return mapToDTO(saved);
     }
 
-    public BrokenReportResDTO update(Integer id, BrokenReportReqDTO dto) throws IOException {
+    public BrokenReportContract.Response update(Integer id, BrokenReportContract.Request dto) throws IOException {
         BrokenReport report = brokenReportRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Report not found"));
         updateEntity(report, dto);
@@ -47,23 +46,22 @@ public class BrokenReportService {
         brokenReportRepository.deleteById(id);
     }
 
-    private void updateEntity(BrokenReport entity, BrokenReportReqDTO dto) {
-        entity.setStatus(dto.getStatus());
-        entity.setContent(dto.getContent());
-        entity.setAttachment(dto.getAttachment());
+    private void updateEntity(BrokenReport entity, BrokenReportContract.Request dto) {
+        entity.setStatus(dto.status());
+        entity.setContent(dto.content());
+        entity.setAttachment(dto.attachment());
     }
 
-    private BrokenReportResDTO mapToDTO(BrokenReport entity) {
-        BrokenReportResDTO dto = new BrokenReportResDTO();
-        dto.setBrokenReportId(entity.getBrokenReportId());
-        dto.setGuest(entity.getGuest());
-        dto.setStatus(entity.getStatus());
-        dto.setContent(entity.getContent());
-        dto.setAttachment(entity.getAttachment());
-        dto.setFeedback(entity.getFeedback());
-        dto.setCreatedAt(entity.getCreatedAt());
-        dto.setUpdatedAt(entity.getUpdatedAt());
-
-        return dto;
+    private BrokenReportContract.Response mapToDTO(BrokenReport entity) {
+        return new BrokenReportContract.Response(
+            entity.getBrokenReportId(),
+            entity.getGuest(),
+            entity.getStatus(),
+            entity.getContent(),
+            entity.getAttachment(),
+            entity.getFeedback(),
+            entity.getCreatedAt(),
+            entity.getUpdatedAt()
+        );
     }
 }

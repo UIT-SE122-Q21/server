@@ -29,3 +29,4 @@ springdoc:
     operations-sorter: alpha
   api-docs:
     path: /v3/api-docs
+  use-fqn: true

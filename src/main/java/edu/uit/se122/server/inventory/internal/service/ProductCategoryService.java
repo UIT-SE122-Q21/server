@@ -1,7 +1,6 @@
 package edu.uit.se122.server.inventory.internal.service;
 
-import edu.uit.se122.server.inventory.internal.dto.ProductCategoryReqDTO;
-import edu.uit.se122.server.inventory.internal.dto.ProductCategoryResDTO;
+import edu.uit.se122.server.inventory.ProductCategoryContract;
 import edu.uit.se122.server.inventory.internal.entity.ProductCategory;
 import edu.uit.se122.server.inventory.internal.repository.ProductCategoryRepository;
 import jakarta.transaction.Transactional;
@@ -16,16 +15,16 @@ import java.util.List;
 public class ProductCategoryService {
     private final ProductCategoryRepository productCategoryRepository;
 
-    public List<ProductCategoryResDTO> getAll() {
+    public List<ProductCategoryContract.Response> getAll() {
         return productCategoryRepository.findAll().stream().map(this::mapToDTO).toList();
     }
 
-    public ProductCategoryResDTO getById(Integer id) {
+    public ProductCategoryContract.Response getById(Integer id) {
         return productCategoryRepository.findById(id).map(this::mapToDTO)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
     }
 
-    public ProductCategoryResDTO create(ProductCategoryReqDTO dto) {
+    public ProductCategoryContract.Response create(ProductCategoryContract.Request dto) {
         ProductCategory category = new ProductCategory();
         updateEntity(category, dto);
         ProductCategory saved = productCategoryRepository.save(category);
@@ -33,7 +32,7 @@ public class ProductCategoryService {
         return mapToDTO(saved);
     }
 
-    public ProductCategoryResDTO update(Integer id, ProductCategoryReqDTO dto) {
+    public ProductCategoryContract.Response update(Integer id, ProductCategoryContract.Request dto) {
         ProductCategory category = productCategoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         updateEntity(category, dto);
@@ -45,17 +44,16 @@ public class ProductCategoryService {
 
     public void delete(Integer id) { productCategoryRepository.deleteById(id); }
 
-    private void updateEntity(ProductCategory entity, ProductCategoryReqDTO dto) {
-        entity.setProductCategoryName(dto.getProductCategoryName());
-        entity.setDescription(dto.getDescription());
+    private void updateEntity(ProductCategory entity, ProductCategoryContract.Request dto) {
+        entity.setName(dto.name());
+        entity.setDescription(dto.description());
     }
 
-    private ProductCategoryResDTO mapToDTO(ProductCategory entity) {
-        ProductCategoryResDTO dto = new ProductCategoryResDTO();
-        dto.setProductCategoryId(entity.getProductCategoryId());
-        dto.setProductCategoryName(entity.getProductCategoryName());
-        dto.setDescription(entity.getDescription());
-
-        return dto;
+    private ProductCategoryContract.Response mapToDTO(ProductCategory entity) {
+        return new ProductCategoryContract.Response(
+                entity.getProductCategoryId(),
+                entity.getName(),
+                entity.getDescription()
+        );
     }
 }

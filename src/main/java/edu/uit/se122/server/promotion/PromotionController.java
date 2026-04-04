@@ -1,7 +1,5 @@
 package edu.uit.se122.server.promotion;
 
-import edu.uit.se122.server.promotion.internal.dto.PromotionReqDTO;
-import edu.uit.se122.server.promotion.internal.dto.PromotionResDTO;
 import edu.uit.se122.server.promotion.internal.service.PromotionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,22 +15,22 @@ public class PromotionController {
     private final PromotionService promotionService;
 
     @PostMapping
-    public ResponseEntity<PromotionResDTO> create(@RequestBody PromotionReqDTO dto) {
+    public ResponseEntity<PromotionContract.Response> create(@RequestBody PromotionContract.Request dto) {
         return ResponseEntity.ok(promotionService.create(dto));
     }
 
     @GetMapping
-    public ResponseEntity<List<PromotionResDTO>> getAll() {
+    public ResponseEntity<List<PromotionContract.Response>> getAll() {
         return ResponseEntity.ok(promotionService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PromotionResDTO> getById(@PathVariable Integer id) {
+    public ResponseEntity<PromotionContract.Response> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(promotionService.getById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PromotionResDTO> update(@PathVariable Integer id, @RequestBody PromotionReqDTO dto) {
+    public ResponseEntity<PromotionContract.Response> update(@PathVariable Integer id, @RequestBody PromotionContract.Request dto) {
         return ResponseEntity.ok(promotionService.update(id, dto));
     }
 
