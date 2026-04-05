@@ -19,11 +19,15 @@ public class Product {
     @Column(unique = true, nullable = false)
     private String barcode;
 
-    private String productName;
+    private String name;
+
+    private String attachment;
 
     private Double unitPrice;
 
     private Integer quantity;
+
+    private Integer minQuantity;
 
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
