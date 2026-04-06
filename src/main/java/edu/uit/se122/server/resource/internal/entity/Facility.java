@@ -18,7 +18,9 @@ public class Facility {
     @Id
     private Integer facilityId;
 
-    private String facilityName;
+    private String name;
+
+    private String description;
 
     @Enumerated(EnumType.STRING)
     private FacilityStatus status;

@@ -49,8 +49,9 @@ public class FacilityCategoryService {
     }
 
     private FacilityCategoryContract.Response mapToDTO(FacilityCategory entity) {
+        String formattedCategoryId = String.format("%03d", entity.getFacilityCategoryId());
         return new FacilityCategoryContract.Response(
-                entity.getFacilityCategoryId(),
+                formattedCategoryId,
                 entity.getName(),
                 entity.getDescription()
         );

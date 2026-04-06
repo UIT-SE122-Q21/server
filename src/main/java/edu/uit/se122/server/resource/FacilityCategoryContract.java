@@ -2,7 +2,7 @@ package edu.uit.se122.server.resource;
 
 public interface FacilityCategoryContract {
     record Response(
-            Integer facilityCategoryId,
+            String facilityCategoryId,
             String name,
             String description
     ) {}
