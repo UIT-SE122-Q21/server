@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class FacilityCriterion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer criteriaId;
+    private Integer criterionId;
 
     private String detail;
 
