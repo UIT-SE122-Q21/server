@@ -9,18 +9,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/admin/auth")
 @RequiredArgsConstructor
-public class AuthController {
+public class AdminAuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthContract.AdminBasic> register(@RequestBody AuthContract.RegisterRequest dto) {
-        return ResponseEntity.ok(authService.register(dto));
+    public ResponseEntity<Object> register(@RequestBody AuthContract.RegisterAdminRequest dto) {
+        authService.registerAdmin(dto);
+        return ResponseEntity.ok("Đăng ký thành công");
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthContract.LoginResponse> login(@RequestBody AuthContract.LoginRequest dto) {
-        return ResponseEntity.ok(authService.login(dto));
+    public ResponseEntity<AuthContract.LoginAdminResponse> login(@RequestBody AuthContract.LoginAdminRequest dto) {
+        return ResponseEntity.ok(authService.loginAdmin(dto));
     }
 }

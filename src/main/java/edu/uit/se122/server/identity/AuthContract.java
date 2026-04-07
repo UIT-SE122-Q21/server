@@ -3,26 +3,38 @@ package edu.uit.se122.server.identity;
 import edu.uit.se122.server.common.enums.AdminRole;
 
 public interface AuthContract {
-    record RegisterRequest(
+    record RegisterAdminRequest(
             String name,
+            String email,
             String password,
             AdminRole role
     ) {}
 
-    record LoginRequest(
+    record RegisterMemberRequest(
+            String name,
+            String email,
+            String password
+    ) {}
+
+    record LoginAdminRequest(
             Integer adminId,
             String password
     ) {}
 
-    record AdminBasic(
-            Integer adminId,
-            String name,
-            AdminRole role
+    record LoginMemberRequest(
+            String email,
+            String password
     ) {}
 
-    record LoginResponse(
+    record LoginAdminResponse(
             String token,
             Integer adminId,
             String name
+    ) {}
+
+    record LoginMemberResponse(
+            String token,
+            String name,
+            String email
     ) {}
 }

@@ -11,7 +11,6 @@ import java.util.List;
 @Data
 public class Member {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer memberId;
 
     private String name;

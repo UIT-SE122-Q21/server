@@ -13,7 +13,6 @@ import java.util.List;
 @Data
 public class Administrator {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer adminId;
 
     @Column(nullable = false)

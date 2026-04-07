@@ -1,5 +1,6 @@
 package edu.uit.se122.server.common.security;
 
+import edu.uit.se122.server.common.enums.LoginRole;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -7,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String adminId;
+        final String id;
+        final LoginRole role;
 
         // 1. Kiểm tra xem Header có chứa Bearer Token không
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -42,17 +47,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
 
         try {
-            adminId = jwtService.extractAdminId(jwt);
+            id = jwtService.extractId(jwt);
+            role = jwtService.extractRole(jwt);
 
             // 4. Nếu có Email và chưa được xác thực trong SecurityContext
-            if (adminId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 // 5. Kiểm tra Token còn hạn không (logic này viết trong JwtService)
                 if (jwtService.isTokenValid(jwt)) {
+                    List<SimpleGrantedAuthority> authorities = Collections.singletonList(
+                            new SimpleGrantedAuthority("ROLE_" + role)
+                    );
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            adminId,
+                            id,
                             null,
-                            new ArrayList<>() // Ở đây bạn có thể thêm Role/Authority nếu cần
+                            authorities
                     );
 
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

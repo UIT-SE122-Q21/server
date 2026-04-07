@@ -1,5 +1,6 @@
 package edu.uit.se122.server.common.config;
 
+import edu.uit.se122.server.common.enums.LoginRole;
 import edu.uit.se122.server.common.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -29,12 +30,13 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Tắt CSRF vì sử dụng JWT
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Không lưu session
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Mở khóa các API đăng nhập, đăng ký
+//                        .requestMatchers("/api/auth/**").permitAll() // Mở khóa các API đăng nhập, đăng ký
+                        .requestMatchers("/api/**").permitAll() // Mở khóa các API đăng nhập, đăng ký
                         .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-resources/**").permitAll()
                         .requestMatchers("/webjars/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole(LoginRole.ADMIN.toString()) // Chỉ Admin mới vào được
                         .anyRequest().authenticated() // Các API khác cần phải có token hợp lệ
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

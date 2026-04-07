@@ -1,6 +1,6 @@
 package edu.uit.se122.server.common.security;
 
-import edu.uit.se122.server.identity.AuthContract;
+import edu.uit.se122.server.common.enums.LoginRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -16,11 +16,11 @@ import java.util.Date;
 public class JwtService {
     private final JwtProperties jwtProperties;
 
-    public String generateToken(AuthContract.AdminBasic admin) {
+    public String generateToken(String id, String email, LoginRole role) {
         return Jwts.builder()
-                .subject(admin.adminId().toString())
-                .claim("name", admin.name())
-                .claim("role", admin.role())
+                .subject(id)
+                .claim("email", email)
+                .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtProperties.getExpiration()))
                 .signWith(getSigningKey(), Jwts.SIG.HS256)
@@ -32,8 +32,12 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String extractAdminId(String token) {
+    public String extractId(String token) {
         return extractAllClaims(token).getSubject();
+    }
+
+    public LoginRole extractRole(String token) {
+        return extractAllClaims(token).get("role", LoginRole.class);
     }
 
     public boolean isTokenValid(String token) {
