@@ -1,9 +1,6 @@
 package edu.uit.se122.server.identity.internal.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -14,9 +11,10 @@ import java.util.List;
 @Data
 public class Member {
     @Id
-    private String memberId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer memberId;
 
-    private String memberName;
+    private String name;
 
     private String email;
 

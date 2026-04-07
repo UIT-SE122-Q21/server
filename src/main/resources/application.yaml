@@ -22,9 +22,13 @@ spring:
         highlight_sql: true
         # Đảm bảo Hibernate gửi đúng múi giờ cho PostgreSQL
         jdbc.time_zone: Asia/Ho_Chi_Minh
+app:
+  jwt:
+    secret: ${JWT_SECRET:default_secret_key_cho_moi_truong_dev_chi_it_nhat_32_ky_tu}
+    expiration: 86400000
 springdoc:
   swagger-ui:
-    path: /swagger-ui.html
+#    path: /swagger-ui.html
     disable-swagger-default-url: true
     operations-sorter: alpha
   api-docs:

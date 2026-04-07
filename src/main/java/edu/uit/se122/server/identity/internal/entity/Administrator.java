@@ -13,12 +13,12 @@ import java.util.List;
 @Data
 public class Administrator {
     @Id
-    private String adminId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer adminId;
 
     @Column(nullable = false)
-    private String adminName;
+    private String name;
 
-    @Column(nullable = false)
     private String email;
 
     private String password;
