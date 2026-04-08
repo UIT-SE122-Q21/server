@@ -23,4 +23,14 @@ public class ApiResponse<T> {
                 .timestamp(LocalDateTime.now())
                 .build();
     }
+
+    public static <T> ApiResponse<T> success(String message, T data) {
+        return ApiResponse.<T>builder()
+                .success(true)
+                .message(message)
+                .code("200")
+                .data(data)
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
 }

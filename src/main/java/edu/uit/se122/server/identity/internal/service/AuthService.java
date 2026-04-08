@@ -2,23 +2,37 @@ package edu.uit.se122.server.identity.internal.service;
 
 import edu.uit.se122.server.common.enums.AdminRole;
 import edu.uit.se122.server.common.enums.LoginRole;
+import edu.uit.se122.server.common.enums.TokenType;
 import edu.uit.se122.server.common.security.JwtService;
 import edu.uit.se122.server.identity.AuthContract;
 import edu.uit.se122.server.identity.internal.entity.Administrator;
 import edu.uit.se122.server.identity.internal.entity.Member;
+import edu.uit.se122.server.identity.internal.entity.MemberToken;
 import edu.uit.se122.server.identity.internal.repository.AdministratorRepository;
 import edu.uit.se122.server.identity.internal.repository.MemberRepository;
+import edu.uit.se122.server.identity.internal.repository.MemberTokenRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AuthService {
     private final AdministratorRepository administratorRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
+    private final MemberTokenRepository memberTokenRepository;
+    private final EmailService emailService;
+
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     public void registerAdmin(AuthContract.RegisterAdminRequest dto) {
         Administrator admin = new Administrator();
@@ -26,8 +40,27 @@ public class AuthService {
     }
 
     public void registerMember(AuthContract.RegisterMemberRequest dto) {
+        Integer maxId = memberRepository.findMaxMemberId();
+        int newMemberId;
+        if (maxId == null) {
+            newMemberId = 636 * 1000 + 1;
+        } else {
+            newMemberId = maxId + 1;
+        }
+
         Member member = new Member();
         updateMemberEntity(member, dto);
+        member.setVerified(false);
+        member.setMemberId(newMemberId);
+        Member savedMember = memberRepository.save(member);
+
+        String token = UUID.randomUUID().toString();
+        MemberToken memberToken = new MemberToken(token, savedMember);
+        memberToken.setType(TokenType.EMAIL_VERIFICATION);
+        memberTokenRepository.save(memberToken);
+
+        String verifyLink = baseUrl + "/api/auth/verify?token=" + token;
+        emailService.sendVerificationEmail(savedMember.getEmail(), verifyLink);
     }
 
     public AuthContract.LoginAdminResponse loginAdmin(AuthContract.LoginAdminRequest dto) {

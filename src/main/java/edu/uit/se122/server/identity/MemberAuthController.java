@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -17,7 +19,7 @@ public class MemberAuthController {
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody AuthContract.RegisterMemberRequest dto) {
         authService.registerMember(dto);
-        return ResponseEntity.ok("Đăng ký thành công");
+        return ResponseEntity.ok(Map.of("message", "Đăng ký thành công"));
     }
 
     @PostMapping("/login")

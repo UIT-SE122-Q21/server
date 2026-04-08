@@ -22,10 +22,22 @@ spring:
         highlight_sql: true
         # Đảm bảo Hibernate gửi đúng múi giờ cho PostgreSQL
         jdbc.time_zone: Asia/Ho_Chi_Minh
+  mail:
+    host: smtp-relay.brevo.com
+    port: 587
+    username: ${BREVO_EMAIL:email_dang_nhap_brevo_cua_ban@gmail.com}
+    password: ${BREVO_PASSWORD:default_brevo_password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 app:
   jwt:
     secret: ${JWT_SECRET:default_secret_key_cho_moi_truong_dev_chi_it_nhat_32_ky_tu}
     expiration: 86400000
+  base-url: "http://localhost:8080"
 springdoc:
   swagger-ui:
 #    path: /swagger-ui.html

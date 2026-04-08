@@ -8,6 +8,8 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.util.Map;
+
 @RestControllerAdvice
 public class ResponseWrapperAdvice implements ResponseBodyAdvice<Object> {
 
@@ -35,6 +37,10 @@ public class ResponseWrapperAdvice implements ResponseBodyAdvice<Object> {
         // Nếu body là null, String (để tránh lỗi cast sang JSON), hoặc đã là ApiResponse thì giữ nguyên
         if (body == null || body instanceof ApiResponse || body instanceof String) {
             return body;
+        }
+
+        if (body instanceof Map && ((Map<?, ?>) body).containsKey("message")) {
+            return ApiResponse.success(((Map<?, ?>) body).get("message").toString(), null);
         }
 
         return ApiResponse.success(body);

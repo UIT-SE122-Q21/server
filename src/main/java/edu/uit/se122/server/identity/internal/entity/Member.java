@@ -1,5 +1,6 @@
 package edu.uit.se122.server.identity.internal.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -19,5 +20,11 @@ public class Member {
 
     private String passwordHash;
 
+    private Boolean verified;
+
     private LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "memberTokens")
+    private List<MemberToken> memberTokens;
 }
