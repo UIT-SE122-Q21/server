@@ -17,16 +17,17 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         highlight_sql: true
         # Đảm bảo Hibernate gửi đúng múi giờ cho PostgreSQL
         jdbc.time_zone: Asia/Ho_Chi_Minh
+    open-in-view: true
   mail:
     host: smtp-relay.brevo.com
     port: 587
-    username: ${BREVO_EMAIL:email_dang_nhap_brevo_cua_ban@gmail.com}
+    username: ${BREVO_LOGIN:email_dang_nhap_brevo_cua_ban@gmail.com}
     password: ${BREVO_PASSWORD:default_brevo_password}
+    sender: ${BREVO_EMAIL:email_da_dang_ky_Brevo}
     properties:
       mail:
         smtp:
@@ -40,7 +41,6 @@ app:
   base-url: "http://localhost:8080"
 springdoc:
   swagger-ui:
-#    path: /swagger-ui.html
     disable-swagger-default-url: true
     operations-sorter: alpha
   api-docs:

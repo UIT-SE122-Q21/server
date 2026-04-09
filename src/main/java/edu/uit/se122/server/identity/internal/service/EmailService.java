@@ -19,7 +19,7 @@ public class EmailService {
         SimpleMailMessage message = new SimpleMailMessage();
 
         // BẮT BUỘC: Thay bằng email bạn đã verify trên Brevo
-        message.setFrom(mailProperties.getUsername());
+        message.setFrom(mailProperties.getSender());
 
         message.setTo(toEmail);
         message.setSubject("Xác thực tài khoản hệ thống sân cầu lông");

@@ -8,5 +8,5 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "spring.mail")
 @Data
 public class MailProperties {
-    private String username;
+    private String sender;
 }
