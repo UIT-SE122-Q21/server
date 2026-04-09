@@ -63,6 +63,21 @@ public class AuthService {
         emailService.sendVerificationEmail(savedMember.getEmail(), verifyLink);
     }
 
+    public void verifyEmail(String token) {
+        MemberToken memberToken = memberTokenRepository.findByToken(token)
+                .orElseThrow(() -> new RuntimeException("Token không tồn tại hoặc không hợp lệ"));
+
+        if (memberToken.getExpiredAt().isBefore(LocalDateTime.now())) {
+            memberTokenRepository.delete(memberToken);
+            throw new RuntimeException("Đường link xác thực đã hết hạn");
+        }
+
+        Member member = memberToken.getMember();
+        member.setVerified(true);
+        memberRepository.save(member);
+        memberTokenRepository.delete(memberToken);
+    }
+
     public AuthContract.LoginAdminResponse loginAdmin(AuthContract.LoginAdminRequest dto) {
         Administrator admin = administratorRepository.findById(dto.adminId())
                 .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại!"));
