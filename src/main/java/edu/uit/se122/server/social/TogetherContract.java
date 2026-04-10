@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public interface TogetherContract {
     record Response(
             Integer togetherId,
+            Integer memberId,
             TogetherStatus status,
             String content,
             Integer numOfPlayers,

@@ -16,7 +16,7 @@ import java.util.Date;
 public class JwtService {
     private final JwtProperties jwtProperties;
 
-    public String generateToken(String id, String email, LoginRole role) {
+    public String generateToken(String id, String email, String role) {
         return Jwts.builder()
                 .subject(id)
                 .claim("email", email)
@@ -36,8 +36,8 @@ public class JwtService {
         return extractAllClaims(token).getSubject();
     }
 
-    public LoginRole extractRole(String token) {
-        return extractAllClaims(token).get("role", LoginRole.class);
+    public String extractRole(String token) {
+        return extractAllClaims(token).get("role", String.class);
     }
 
     public boolean isTokenValid(String token) {

@@ -51,6 +51,7 @@ public class TogetherService {
     private TogetherContract.Response mapToDTO(Together entity) {
         return new TogetherContract.Response(
                 entity.getTogetherId(),
+                entity.getMemberId(),
                 entity.getStatus(),
                 entity.getContent(),
                 entity.getNumOfPlayers(),

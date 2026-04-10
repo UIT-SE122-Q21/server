@@ -34,8 +34,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final String id;
-        final LoginRole role;
+        final Integer id;
+        final String role;
 
         // 1. Kiểm tra xem Header có chứa Bearer Token không
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -47,11 +47,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
 
         try {
-            id = jwtService.extractId(jwt);
+            id = Integer.valueOf(jwtService.extractId(jwt));
             role = jwtService.extractRole(jwt);
 
             // 4. Nếu có Email và chưa được xác thực trong SecurityContext
-            if (id != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 // 5. Kiểm tra Token còn hạn không (logic này viết trong JwtService)
                 if (jwtService.isTokenValid(jwt)) {

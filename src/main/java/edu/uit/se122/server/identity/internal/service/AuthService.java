@@ -89,7 +89,7 @@ public class AuthService {
         if (!passwordEncoder.matches(dto.password(), admin.getPassword())) {
             throw new RuntimeException("Mật khẩu không chính xác!");
         }
-        String jwtToken = jwtService.generateToken(admin.getAdminId().toString(), admin.getEmail(), LoginRole.ADMIN);
+        String jwtToken = jwtService.generateToken(admin.getAdminId().toString(), admin.getEmail(), LoginRole.ADMIN.toString());
 
         return new AuthContract.LoginAdminResponse(jwtToken, admin.getAdminId(), admin.getName());
     }
@@ -101,7 +101,7 @@ public class AuthService {
         if (!passwordEncoder.matches(dto.password(), member.getPasswordHash())) {
             throw new RuntimeException("Mật khẩu không chính xác!");
         }
-        String accessToken = jwtService.generateToken(member.getMemberId().toString(), member.getEmail(), LoginRole.MEMBER);
+        String accessToken = jwtService.generateToken(member.getMemberId().toString(), member.getEmail(), LoginRole.MEMBER.toString());
         RefreshToken refreshToken = refreshTokenService.create(member.getMemberId());
 
         return new AuthContract.LoginMemberResponse(
@@ -121,7 +121,7 @@ public class AuthService {
         String newAccessToken = jwtService.generateToken(
                 member.getMemberId().toString(),
                 member.getEmail(),
-                LoginRole.MEMBER
+                LoginRole.MEMBER.toString()
         );
         RefreshToken newRefreshToken = refreshTokenService.create(member.getMemberId());
 

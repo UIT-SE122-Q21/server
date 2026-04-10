@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,6 +17,7 @@ import java.time.LocalDateTime;
 @Data
 @ToString(exclude = "chat")
 @EqualsAndHashCode(exclude = "chat")
+@EntityListeners(AuditingEntityListener.class)
 public class Together {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +36,9 @@ public class Together {
 
     private LocalDateTime toTime;
 
-    private String memberId;
+    @CreatedBy
+    @Column(updatable = false)
+    private Integer memberId;
 
     private Integer courtOrderId;
 
