@@ -8,9 +8,11 @@ import edu.uit.se122.server.identity.AuthContract;
 import edu.uit.se122.server.identity.internal.entity.Administrator;
 import edu.uit.se122.server.identity.internal.entity.Member;
 import edu.uit.se122.server.identity.internal.entity.MemberToken;
+import edu.uit.se122.server.identity.internal.entity.RefreshToken;
 import edu.uit.se122.server.identity.internal.repository.AdministratorRepository;
 import edu.uit.se122.server.identity.internal.repository.MemberRepository;
 import edu.uit.se122.server.identity.internal.repository.MemberTokenRepository;
+import edu.uit.se122.server.identity.internal.repository.RefreshTokenRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +31,9 @@ public class AuthService {
     private final JwtService jwtService;
     private final MemberRepository memberRepository;
     private final MemberTokenRepository memberTokenRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final EmailService emailService;
+    private final RefreshTokenService refreshTokenService;
 
     @Value("${app.base-url}")
     private String baseUrl;
@@ -97,9 +101,36 @@ public class AuthService {
         if (!passwordEncoder.matches(dto.password(), member.getPasswordHash())) {
             throw new RuntimeException("Mật khẩu không chính xác!");
         }
-        String jwtToken = jwtService.generateToken(member.getMemberId().toString(), member.getEmail(), LoginRole.MEMBER);
+        String accessToken = jwtService.generateToken(member.getMemberId().toString(), member.getEmail(), LoginRole.MEMBER);
+        RefreshToken refreshToken = refreshTokenService.create(member.getMemberId());
 
-        return new AuthContract.LoginMemberResponse(jwtToken, member.getName(), member.getEmail());
+        return new AuthContract.LoginMemberResponse(
+                accessToken,
+                refreshToken.getToken(),
+                member.getName(),
+                member.getEmail()
+        );
+    }
+
+    public AuthContract.LoginMemberResponse refreshToken(AuthContract.RefreshTokenRequest dto) {
+        RefreshToken oldRefreshToken = refreshTokenRepository.findByToken(dto.refreshToken())
+                .orElseThrow(() -> new RuntimeException("Refresh token not found"));
+
+        refreshTokenService.verifyExpiration(oldRefreshToken);
+        Member member = oldRefreshToken.getMember();
+        String newAccessToken = jwtService.generateToken(
+                member.getMemberId().toString(),
+                member.getEmail(),
+                LoginRole.MEMBER
+        );
+        RefreshToken newRefreshToken = refreshTokenService.create(member.getMemberId());
+
+        return new AuthContract.LoginMemberResponse(
+                newAccessToken,
+                newRefreshToken.getToken(),
+                member.getName(),
+                member.getEmail()
+        );
     }
 
     private void updateAdminEntity(Administrator entity, AuthContract.RegisterAdminRequest dto) {

@@ -48,4 +48,9 @@ public class MemberAuthController {
     public ResponseEntity<AuthContract.LoginMemberResponse> login(@RequestBody AuthContract.LoginMemberRequest dto) {
         return ResponseEntity.ok(authService.loginMember(dto));
     }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthContract.LoginMemberResponse> refreshToken(@RequestBody AuthContract.RefreshTokenRequest dto) {
+        return ResponseEntity.ok(authService.refreshToken(dto));
+    }
 }

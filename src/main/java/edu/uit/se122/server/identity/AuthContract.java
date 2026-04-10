@@ -33,8 +33,13 @@ public interface AuthContract {
     ) {}
 
     record LoginMemberResponse(
-            String token,
+            String accessToken,
+            String refreshToken,
             String name,
             String email
+    ) {}
+
+    record RefreshTokenRequest(
+            String refreshToken
     ) {}
 }

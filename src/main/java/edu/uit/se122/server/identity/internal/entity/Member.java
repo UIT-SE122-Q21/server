@@ -27,4 +27,8 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @JsonManagedReference(value = "memberTokens")
     private List<MemberToken> memberTokens;
+
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "refreshToken")
+    private RefreshToken refreshToken;
 }

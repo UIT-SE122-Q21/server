@@ -32,10 +32,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
 //                        .requestMatchers("/api/auth/**").permitAll() // Mở khóa các API đăng nhập, đăng ký
                         .requestMatchers("/api/**").permitAll() // Mở khóa các API đăng nhập, đăng ký
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/swagger-resources/**").permitAll()
-                        .requestMatchers("/webjars/**").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole(LoginRole.ADMIN.toString()) // Chỉ Admin mới vào được
                         .anyRequest().authenticated() // Các API khác cần phải có token hợp lệ
                 )
