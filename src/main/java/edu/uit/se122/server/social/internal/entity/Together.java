@@ -1,8 +1,7 @@
 package edu.uit.se122.server.social.internal.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import edu.uit.se122.server.booking.internal.entity.CourtOrderDetail;
-import edu.uit.se122.server.common.enums.PlanStatus;
+import edu.uit.se122.server.common.enums.TogetherStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,7 +9,6 @@ import lombok.ToString;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Table(name = "Together")
@@ -23,7 +21,7 @@ public class Together {
     private Integer togetherId;
 
     @Enumerated(EnumType.STRING)
-    private PlanStatus status;
+    private TogetherStatus status;
 
     private String content;
 
