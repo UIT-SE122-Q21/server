@@ -27,7 +27,7 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
-    public ProductContract.Response create(ProductContract.Request dto) {
+    public void create(ProductContract.Request dto) {
         ProductCategory category = productCategoryRepository.findById(dto.categoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         Integer maxId = productRepository.findMaxProductIdByCategoryId(category.getProductCategoryId());
@@ -42,18 +42,13 @@ public class ProductService {
         product.setProductId(newProductId);
         updateEntity(product, dto);
         Product saved = productRepository.save(product);
-
-        return mapToDTO(saved);
     }
 
-    public ProductContract.Response update(Integer id, ProductContract.Request dto) {
+    public void update(Integer id, ProductContract.Request dto) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
         updateEntity(product, dto);
         productRepository.save(product);
-
-        return productRepository.findById(id).map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
     }
 
     public void delete(Integer id) { productRepository.deleteById(id); }

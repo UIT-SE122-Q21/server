@@ -28,7 +28,7 @@ public class FacilityService {
                 .orElseThrow(() -> new RuntimeException("Facility not found"));
     }
 
-    public FacilityContract.Response create(FacilityContract.CreateRequest dto) {
+    public void create(FacilityContract.CreateRequest dto) {
         FacilityCategory category = facilityCategoryRepository.findById(dto.categoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         Integer maxId = facilityRepository.findMaxProductIdByCategoryId(category.getFacilityCategoryId());
@@ -44,17 +44,13 @@ public class FacilityService {
         facility.setStatus(FacilityStatus.Stock);
         createEntity(facility, dto);
         Facility saved = facilityRepository.save(facility);
-
-        return mapToDTO(saved);
     }
 
-    public FacilityContract.Response update(Integer id, FacilityContract.UpdateRequest dto) {
+    public void update(Integer id, FacilityContract.UpdateRequest dto) {
         Facility facility = facilityRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Facility not found"));
         updateEntity(facility, dto);
         facilityRepository.save(facility);
-        return facilityRepository.findById(id).map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("Facility not found"));
     }
 
     public void delete(Integer id) { facilityRepository.deleteById(id); }

@@ -20,7 +20,7 @@ public class PromotionService {
 //    private final PromotionDetailRepository detailRepository;
 
     // CREATE
-    public PromotionContract.Response create(PromotionContract.Request dto) {
+    public void create(PromotionContract.Request dto) {
         Promotion promotion = new Promotion();
         updateEntity(promotion, dto);
         Promotion saved = promotionRepository.save(promotion);
@@ -36,7 +36,6 @@ public class PromotionService {
             List<PromotionDetail> savedDetails = detailRepository.saveAll(details);
             saved.setDetails(savedDetails);
         }*/
-        return mapToDTO(saved);
     }
 
     // READ ALL
@@ -51,13 +50,11 @@ public class PromotionService {
     }
 
     // UPDATE
-    public PromotionContract.Response update(Integer id, PromotionContract.Request dto) {
+    public void update(Integer id, PromotionContract.Request dto) {
         Promotion promotion = promotionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Promotion not found"));
         updateEntity(promotion, dto);
         promotionRepository.save(promotion);
-        return promotionRepository.findById(id).map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("Promotion not found"));
     }
 
     // DELETE

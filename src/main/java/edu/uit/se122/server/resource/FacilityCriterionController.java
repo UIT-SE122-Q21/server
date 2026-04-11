@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/facility-criterion")
@@ -24,18 +25,18 @@ public class FacilityCriterionController {
     }
 
     @PostMapping
-    public ResponseEntity<FacilityCriterionContract.Response> create(@RequestBody FacilityCriterionContract.Request dto) {
-        return ResponseEntity.ok(facilityCriterionService.create(dto));
+    public ResponseEntity<Object> create(@RequestBody FacilityCriterionContract.Request dto) {
+        return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FacilityCriterionContract.Response> update(@PathVariable Integer id, @RequestBody FacilityCriterionContract.Request dto) {
-        return ResponseEntity.ok(facilityCriterionService.update(id, dto));
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody FacilityCriterionContract.Request dto) {
+        return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Object> delete(@PathVariable Integer id) {
         facilityCriterionService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("message", "Xóa thành công"));
     }
 }

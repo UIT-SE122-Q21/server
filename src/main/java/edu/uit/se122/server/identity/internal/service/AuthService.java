@@ -39,8 +39,18 @@ public class AuthService {
     private String baseUrl;
 
     public void registerAdmin(AuthContract.RegisterAdminRequest dto) {
+        Integer maxId = memberRepository.findMaxMemberId();
+        int newMemberId;
+        if (maxId == null) {
+            newMemberId = 236 * 1000 + 1;
+        } else {
+            newMemberId = maxId + 1;
+        }
+
         Administrator admin = new Administrator();
         updateAdminEntity(admin, dto);
+        admin.setAdminId(newMemberId);
+        administratorRepository.save(admin);
     }
 
     public void registerMember(AuthContract.RegisterMemberRequest dto) {
@@ -98,7 +108,7 @@ public class AuthService {
         Member member = memberRepository.findByEmail(dto.email())
                 .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại"));
 
-        if (!passwordEncoder.matches(dto.password(), member.getPasswordHash())) {
+        if (!passwordEncoder.matches(dto.password(), member.getPassword())) {
             throw new RuntimeException("Mật khẩu không chính xác!");
         }
         String accessToken = jwtService.generateToken(member.getMemberId().toString(), member.getEmail(), LoginRole.MEMBER.toString());
@@ -143,6 +153,6 @@ public class AuthService {
     public void updateMemberEntity(Member entity, AuthContract.RegisterMemberRequest dto) {
         entity.setName(dto.name());
         entity.setEmail(dto.email());
-        entity.setPasswordHash(passwordEncoder.encode(dto.password()));
+        entity.setPassword(passwordEncoder.encode(dto.password()));
     }
 }

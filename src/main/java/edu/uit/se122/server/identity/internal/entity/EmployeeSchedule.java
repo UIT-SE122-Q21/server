@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "EmployeeSchedule")
@@ -18,9 +19,9 @@ public class EmployeeSchedule {
 
     private LocalDate workDate;
 
-    private LocalDateTime fromTime;
+    private LocalTime fromTime;
 
-    private LocalDateTime toTime;
+    private LocalTime toTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adminId")

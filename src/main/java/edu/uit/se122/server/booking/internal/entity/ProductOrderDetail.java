@@ -22,7 +22,7 @@ public class ProductOrderDetail {
 
     private Double unitDiscount;
 
-    private Boolean isOrder;
+    private Boolean draft;
 
     @ManyToOne
     @JoinColumn(name = "CourtOrderId")

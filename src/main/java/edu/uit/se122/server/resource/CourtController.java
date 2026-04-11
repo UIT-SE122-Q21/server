@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/court")
@@ -24,18 +25,18 @@ public class CourtController {
     }
 
     @PostMapping
-    public ResponseEntity<CourtContract.Response> create(@RequestBody CourtContract.Request dto) {
-        return ResponseEntity.ok(courtService.create(dto));
+    public ResponseEntity<Object> create(@RequestBody CourtContract.Request dto) {
+        return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CourtContract.Response> update(@PathVariable Integer id, @RequestBody CourtContract.Request dto) {
-        return ResponseEntity.ok(courtService.update(id, dto));
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody CourtContract.Request dto) {
+        return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Object> delete(@PathVariable Integer id) {
         courtService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("message", "Xóa thành công"));
     }
 }

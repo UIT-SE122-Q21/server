@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/facility")
@@ -15,8 +16,8 @@ public class FacilityController {
     private final FacilityService facilityService;
 
     @PostMapping
-    public ResponseEntity<FacilityContract.Response> create(@RequestBody FacilityContract.CreateRequest dto) {
-        return ResponseEntity.ok(facilityService.create(dto));
+    public ResponseEntity<Object> create(@RequestBody FacilityContract.CreateRequest dto) {
+        return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
     @GetMapping
@@ -30,13 +31,13 @@ public class FacilityController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<FacilityContract.Response> update(@PathVariable Integer id, @RequestBody FacilityContract.UpdateRequest dto) {
-        return ResponseEntity.ok(facilityService.update(id, dto));
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody FacilityContract.UpdateRequest dto) {
+        return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Object> delete(@PathVariable Integer id) {
         facilityService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("message", "Xóa thành công"));
     }
 }

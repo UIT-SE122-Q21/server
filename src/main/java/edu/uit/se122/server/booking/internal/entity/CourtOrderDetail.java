@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "CourtOrderDetail")
@@ -18,9 +18,9 @@ public class CourtOrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer courtOrderDetailId;
 
-    private LocalDateTime fromTime;
+    private LocalTime fromTime;
 
-    private LocalDateTime toTime;
+    private LocalTime toTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CourtOrderId")

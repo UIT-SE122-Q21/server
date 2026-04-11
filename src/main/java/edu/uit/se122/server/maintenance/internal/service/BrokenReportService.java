@@ -25,21 +25,17 @@ public class BrokenReportService {
                 .orElseThrow(() -> new RuntimeException("Report not found"));
     }
 
-    public BrokenReportContract.Response create(BrokenReportContract.Request dto) throws IOException {
+    public void create(BrokenReportContract.Request dto) throws IOException {
         BrokenReport report = new BrokenReport();
         updateEntity(report, dto);
         BrokenReport saved = brokenReportRepository.save(report);
-
-        return mapToDTO(saved);
     }
 
-    public BrokenReportContract.Response update(Integer id, BrokenReportContract.Request dto) throws IOException {
+    public void update(Integer id, BrokenReportContract.Request dto) throws IOException {
         BrokenReport report = brokenReportRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Report not found"));
         updateEntity(report, dto);
         brokenReportRepository.save(report);
-        return brokenReportRepository.findById(id).map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("Report not found"));
     }
 
     public void delete(Integer id) {

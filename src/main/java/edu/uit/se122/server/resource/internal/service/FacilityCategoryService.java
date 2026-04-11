@@ -24,21 +24,17 @@ public class FacilityCategoryService {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
     }
 
-    public FacilityCategoryContract.Response create(FacilityCategoryContract.Request dto) {
+    public void create(FacilityCategoryContract.Request dto) {
         FacilityCategory category = new FacilityCategory();
         updateEntity(category, dto);
         FacilityCategory saved = facilityCategoryRepository.save(category);
-
-        return mapToDTO(saved);
     }
 
-    public FacilityCategoryContract.Response update(Integer id, FacilityCategoryContract.Request dto) {
+    public void update(Integer id, FacilityCategoryContract.Request dto) {
         FacilityCategory category = facilityCategoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         updateEntity(category, dto);
         facilityCategoryRepository.save(category);
-        return facilityCategoryRepository.findById(id).map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
     }
 
     public void delete(Integer id) { facilityCategoryRepository.deleteById(id); }

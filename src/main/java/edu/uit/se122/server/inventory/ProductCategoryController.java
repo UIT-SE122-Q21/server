@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/product-category")
@@ -15,8 +16,8 @@ public class ProductCategoryController {
     private final ProductCategoryService productCategoryService;
 
     @PostMapping
-    public ResponseEntity<ProductCategoryContract.Response> create(@RequestBody ProductCategoryContract.Request dto) {
-        return ResponseEntity.ok(productCategoryService.create(dto));
+    public ResponseEntity<Object> create(@RequestBody ProductCategoryContract.Request dto) {
+        return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
     @GetMapping
@@ -30,13 +31,13 @@ public class ProductCategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductCategoryContract.Response> update(@PathVariable Integer id, @RequestBody ProductCategoryContract.Request dto) {
-        return ResponseEntity.ok(productCategoryService.update(id, dto));
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProductCategoryContract.Request dto) {
+        return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Object> delete(@PathVariable Integer id) {
         productCategoryService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("message", "Xóa thành công"));
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/broken-report")
@@ -17,8 +18,8 @@ public class BrokenReportController {
     private final BrokenReportService brokenReportService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BrokenReportContract.Response> create(@ModelAttribute BrokenReportContract.Request request) throws IOException {
-        return ResponseEntity.ok(brokenReportService.create(request));
+    public ResponseEntity<Object> create(@ModelAttribute BrokenReportContract.Request request) throws IOException {
+        return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
     @GetMapping
@@ -32,15 +33,15 @@ public class BrokenReportController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BrokenReportContract.Response> update(
+    public ResponseEntity<Object> update(
             @PathVariable Integer id,
             @ModelAttribute BrokenReportContract.Request request) throws IOException {
-        return ResponseEntity.ok(brokenReportService.update(id, request));
+        return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Object> delete(@PathVariable Integer id) {
         brokenReportService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("message", "Xóa thành công"));
     }
 }

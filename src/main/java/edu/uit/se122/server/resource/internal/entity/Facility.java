@@ -6,12 +6,16 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Facility")
 @Data
+@EntityListeners(AuditingEntityListener.class)
 @ToString(exclude = "category")
 @EqualsAndHashCode(exclude = "category")
 public class Facility {
@@ -25,8 +29,11 @@ public class Facility {
     @Enumerated(EnumType.STRING)
     private FacilityStatus status;
 
+    @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
+    @LastModifiedDate
     private LocalDateTime updateAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

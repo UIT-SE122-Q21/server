@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/promotions")
@@ -15,8 +16,8 @@ public class PromotionController {
     private final PromotionService promotionService;
 
     @PostMapping
-    public ResponseEntity<PromotionContract.Response> create(@RequestBody PromotionContract.Request dto) {
-        return ResponseEntity.ok(promotionService.create(dto));
+    public ResponseEntity<Object> create(@RequestBody PromotionContract.Request dto) {
+        return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
     @GetMapping
@@ -30,13 +31,13 @@ public class PromotionController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PromotionContract.Response> update(@PathVariable Integer id, @RequestBody PromotionContract.Request dto) {
-        return ResponseEntity.ok(promotionService.update(id, dto));
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody PromotionContract.Request dto) {
+        return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+    public ResponseEntity<Object> delete(@PathVariable Integer id) {
         promotionService.delete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("message", "Xóa thành công"));
     }
 }

@@ -27,25 +27,20 @@ public class FacilityCriterionService {
                 .orElseThrow(() -> new RuntimeException("Criterion not found"));
     }
 
-    public FacilityCriterionContract.Response create(FacilityCriterionContract.Request dto) {
+    public void create(FacilityCriterionContract.Request dto) {
         FacilityCategory category = facilityCategoryRepository.findById(dto.categoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
         FacilityCriterion criterion = new FacilityCriterion();
         updateEntity(criterion, dto);
         FacilityCriterion saved = facilityCriterionRepository.save(criterion);
-
-        return mapToDTO(saved);
     }
 
-    public FacilityCriterionContract.Response update(Integer id, FacilityCriterionContract.Request dto) {
+    public void update(Integer id, FacilityCriterionContract.Request dto) {
         FacilityCriterion criterion = facilityCriterionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Criterion not found"));
         updateEntity(criterion, dto);
         facilityCriterionRepository.save(criterion);
-
-        return facilityCriterionRepository.findById(id).map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("Criterion not found"));
     }
 
     public void delete(Integer id) { facilityCriterionRepository.deleteById(id); }

@@ -24,22 +24,17 @@ public class ProductCategoryService {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
     }
 
-    public ProductCategoryContract.Response create(ProductCategoryContract.Request dto) {
+    public void create(ProductCategoryContract.Request dto) {
         ProductCategory category = new ProductCategory();
         updateEntity(category, dto);
         ProductCategory saved = productCategoryRepository.save(category);
-
-        return mapToDTO(saved);
     }
 
-    public ProductCategoryContract.Response update(Integer id, ProductCategoryContract.Request dto) {
+    public void update(Integer id, ProductCategoryContract.Request dto) {
         ProductCategory category = productCategoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         updateEntity(category, dto);
         productCategoryRepository.save(category);
-
-        return productCategoryRepository.findById(id).map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
     }
 
     public void delete(Integer id) { productCategoryRepository.deleteById(id); }

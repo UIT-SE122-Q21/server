@@ -24,21 +24,17 @@ public class CourtService {
                 .orElseThrow(() -> new RuntimeException("Court not found"));
     }
 
-    public CourtContract.Response create(CourtContract.Request dto) {
+    public void create(CourtContract.Request dto) {
         Court court = new Court();
         updateEntity(court, dto);
         Court saved = courtRepository.save(court);
-
-        return mapToDTO(saved);
     }
 
-    public CourtContract.Response update(Integer id, CourtContract.Request dto) {
+    public void update(Integer id, CourtContract.Request dto) {
         Court court = courtRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Court not found"));
         updateEntity(court, dto);
         courtRepository.save(court);
-        return courtRepository.findById(id).map(this::mapToDTO)
-                .orElseThrow(() -> new RuntimeException("Court not found"));
     }
 
     public void delete(Integer id) { courtRepository.deleteById(id); }

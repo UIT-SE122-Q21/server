@@ -6,12 +6,16 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ChatDetail")
 @Data
+@EntityListeners(AuditingEntityListener.class)
 @ToString(exclude = "chat")
 @EqualsAndHashCode(exclude = "chat")
 public class ChatDetail {
@@ -21,9 +25,13 @@ public class ChatDetail {
 
     private String content;
 
+    @CreatedDate
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    private String senderId;
+    @CreatedBy
+    @Column(updatable = false)
+    private String memberId;
 
     @ManyToOne
     @JoinColumn(name = "ChatId")
