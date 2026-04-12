@@ -37,11 +37,13 @@ public class CourtOrder {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private String adminId;
+    private Integer adminId;
 
-    private String userId;
+    private Integer userId;
 
     private Boolean guest;
+
+    private String email;
 
     // Navigation: Chi tiết các sân được đặt trong đơn này
     @OneToMany(mappedBy = "courtOrder", cascade = CascadeType.ALL)

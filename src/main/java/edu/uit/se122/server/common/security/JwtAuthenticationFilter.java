@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        final Integer id;
+        final int id;
         final String role;
 
         // 1. Kiểm tra xem Header có chứa Bearer Token không
@@ -47,7 +47,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
 
         try {
-            id = Integer.valueOf(jwtService.extractId(jwt));
+            id = Integer.parseInt(jwtService.extractId(jwt));
             role = jwtService.extractRole(jwt);
 
             // 4. Nếu có Email và chưa được xác thực trong SecurityContext
