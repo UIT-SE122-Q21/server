@@ -17,6 +17,7 @@ public class PromotionController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody PromotionContract.Request dto) {
+        promotionService.create(dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
@@ -32,6 +33,7 @@ public class PromotionController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody PromotionContract.Request dto) {
+        promotionService.update(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 

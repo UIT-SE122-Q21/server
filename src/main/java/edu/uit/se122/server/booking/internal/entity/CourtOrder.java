@@ -43,7 +43,11 @@ public class CourtOrder {
 
     private Boolean guest;
 
-    private String email;
+    private String guestName;
+
+    private String guestEmail;
+
+    private String guestPhoneNumber;
 
     // Navigation: Chi tiết các sân được đặt trong đơn này
     @OneToMany(mappedBy = "courtOrder", cascade = CascadeType.ALL)

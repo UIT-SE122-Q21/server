@@ -39,7 +39,7 @@ public class AuthService {
     private String baseUrl;
 
     public void registerAdmin(AuthContract.RegisterAdminRequest dto) {
-        Integer maxId = memberRepository.findMaxMemberId();
+        Integer maxId = administratorRepository.findMaxAdminId();
         int newMemberId;
         if (maxId == null) {
             newMemberId = 236 * 1000 + 1;

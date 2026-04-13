@@ -26,11 +26,13 @@ public class CourtController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody CourtContract.Request dto) {
+        courtService.create(dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody CourtContract.Request dto) {
+        courtService.update(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 
