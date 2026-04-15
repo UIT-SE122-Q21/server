@@ -20,6 +20,8 @@ public class Court {
 
     private String name;
 
+    private String description;
+
     private Integer numOfIndex;
 
     private Double unitPrice;

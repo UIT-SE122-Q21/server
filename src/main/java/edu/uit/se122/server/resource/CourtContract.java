@@ -21,4 +21,10 @@ public interface CourtContract {
             Double unitPrice,
             CourtStatus status
     ) {}
+
+    record CreatedEvent(
+            Integer courtId,
+            String name,
+            Double unitPrice
+    ) {}
 }

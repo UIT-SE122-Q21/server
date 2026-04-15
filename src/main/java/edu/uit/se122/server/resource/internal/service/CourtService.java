@@ -5,6 +5,7 @@ import edu.uit.se122.server.resource.internal.entity.Court;
 import edu.uit.se122.server.resource.internal.repository.CourtRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 @Transactional
 public class CourtService {
     private final CourtRepository courtRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<CourtContract.Response> getAll() {
         return courtRepository.findAll().stream().map(this::mapToDTO).toList();
@@ -28,6 +30,13 @@ public class CourtService {
         Court court = new Court();
         updateEntity(court, dto);
         Court saved = courtRepository.save(court);
+
+        CourtContract.CreatedEvent event = new CourtContract.CreatedEvent(
+                saved.getCourtId(),
+                saved.getName(),
+                saved.getUnitPrice()
+        );
+        eventPublisher.publishEvent(event);
     }
 
     public void update(Integer id, CourtContract.Request dto) {
