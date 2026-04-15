@@ -50,4 +50,9 @@ public interface CourtOrderContract {
             LocalTime fromTime,
             LocalTime toTime
     ) {}
+
+    record InvoiceRequest(
+            Integer courtOrderId,
+            List<DetailResponse> detailResponses
+    ) {}
 }

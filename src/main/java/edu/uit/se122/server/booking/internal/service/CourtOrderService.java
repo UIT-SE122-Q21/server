@@ -1,14 +1,19 @@
 package edu.uit.se122.server.booking.internal.service;
 
 import edu.uit.se122.server.booking.CourtOrderContract;
+import edu.uit.se122.server.booking.internal.entity.CourtCache;
 import edu.uit.se122.server.booking.internal.entity.CourtOrder;
 import edu.uit.se122.server.booking.internal.entity.CourtOrderDetail;
+import edu.uit.se122.server.booking.internal.entity.CourtOrderInvoice;
+import edu.uit.se122.server.booking.internal.repository.CourtCacheRepository;
 import edu.uit.se122.server.booking.internal.repository.CourtOrderDetailRepository;
+import edu.uit.se122.server.booking.internal.repository.CourtOrderInvoiceRepository;
 import edu.uit.se122.server.booking.internal.repository.CourtOrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.List;
 
 @Service
@@ -17,6 +22,8 @@ import java.util.List;
 public class CourtOrderService {
     private final CourtOrderRepository courtOrderRepository;
     private final CourtOrderDetailRepository detailRepository;
+    private final CourtOrderInvoiceRepository invoiceRepository;
+    private final CourtCacheRepository courtCacheRepository;
 
     public List<CourtOrderContract.Response> getAll() {
         return courtOrderRepository.findAll().stream().map(this::mapToDTO).toList();
@@ -31,7 +38,9 @@ public class CourtOrderService {
         CourtOrder order = new CourtOrder();
         updateEntity(order, dto);
         order.setAdminId(adminId);
-        courtOrderRepository.save(order);
+        CourtOrder saved = courtOrderRepository.save(order);
+
+        calculateInvoice(saved);
     }
 
     public void createByUser(Integer userId, CourtOrderContract.Request dto) {
@@ -47,6 +56,31 @@ public class CourtOrderService {
             order.setGuestPhoneNumber(dto.guestPhoneNumber());
         }
         courtOrderRepository.save(order);
+    }
+
+    public void calculateInvoice(CourtOrder courtOrder) {
+        double totalAmount = 0;
+        double totalTime = 0;
+        int totalCourts = courtOrder.getCourtOrderDetails().size();
+
+        for (CourtOrderDetail detail : courtOrder.getCourtOrderDetails()) {
+            CourtCache courtCache = courtCacheRepository.findById(detail.getCourtId())
+                    .orElseThrow(() -> new RuntimeException("Court not found"));
+
+            Duration duration = Duration.between(detail.getFromTime(), detail.getToTime());
+            double hours = duration.toMinutes() / 60.0;
+            double amount = courtCache.getUnitPrice() * hours;
+
+            totalTime += hours;
+            totalAmount += amount;
+        }
+
+        CourtOrderInvoice invoice = new CourtOrderInvoice();
+        invoice.setQuantity(totalCourts);
+        invoice.setTotalTime(totalTime);
+        invoice.setTotalAmount(totalAmount);
+        invoice.setCourtOrder(courtOrder);
+        invoiceRepository.save(invoice);
     }
 
     private void updateEntity(CourtOrder entity, CourtOrderContract.Request dto) {
