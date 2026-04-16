@@ -23,4 +23,11 @@ public interface ProductContract {
             ProductStatus status,
             Integer categoryId
     ) {}
+
+    record CreatedEvent(
+            Integer productId,
+            String barcode,
+            String name,
+            Double unitPrice
+    ) {}
 }

@@ -18,7 +18,8 @@ public class BrokenReportController {
     private final BrokenReportService brokenReportService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Object> create(@ModelAttribute BrokenReportContract.Request request) throws IOException {
+    public ResponseEntity<Object> create(@ModelAttribute BrokenReportContract.Request dto) throws IOException {
+        brokenReportService.create(dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
@@ -35,7 +36,8 @@ public class BrokenReportController {
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Object> update(
             @PathVariable Integer id,
-            @ModelAttribute BrokenReportContract.Request request) throws IOException {
+            @ModelAttribute BrokenReportContract.Request dto) throws IOException {
+        brokenReportService.update(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 

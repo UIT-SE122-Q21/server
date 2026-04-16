@@ -1,0 +1,62 @@
+package edu.uit.se122.server.booking.internal.service;
+
+import edu.uit.se122.server.booking.ProductOrderContract;
+import edu.uit.se122.server.booking.internal.entity.CourtOrder;
+import edu.uit.se122.server.booking.internal.entity.ProductCache;
+import edu.uit.se122.server.booking.internal.entity.ProductOrderDetail;
+import edu.uit.se122.server.booking.internal.entity.ProductOrderInvoice;
+import edu.uit.se122.server.booking.internal.repository.CourtOrderRepository;
+import edu.uit.se122.server.booking.internal.repository.ProductCacheRepository;
+import edu.uit.se122.server.booking.internal.repository.ProductOrderInvoiceRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class ProductOrderService {
+    private final ProductOrderInvoiceRepository invoiceRepository;
+    private final CourtOrderRepository courtOrderRepository;
+    private final ProductCacheRepository productCacheRepository;
+
+    public void calculateInvoiceByAdmin(ProductOrderContract.InvoiceRequest dto) {
+        double totalAmount = 0;
+        double changeAmount = 0;
+        CourtOrder courtOrder = courtOrderRepository.findById(dto.courtOrderId())
+                .orElseThrow(() -> new RuntimeException("Court order not found"));
+
+        for (ProductOrderContract.DetailRequest detail : dto.detailRequests()) {
+            ProductCache productCache = productCacheRepository.findById(detail.productId())
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            if (detail.racketRentTime() == null) {
+                totalAmount += productCache.getUnitPrice() * detail.quantity();
+            } else {
+                totalAmount += productCache.getUnitPrice() * detail.quantity() * detail.racketRentTime();
+            }
+        }
+        changeAmount = dto.givenAmount() - totalAmount;
+        updateEntity(courtOrder, dto);
+        ProductOrderInvoice invoice = new ProductOrderInvoice();
+        invoice.setTotalAmount(totalAmount);
+        invoice.setGivenAmount(dto.givenAmount());
+        invoice.setChangeAmount(changeAmount);
+        invoice.setCourtOrder(courtOrder);
+        invoiceRepository.save(invoice);
+    }
+
+    private void updateEntity(CourtOrder entity, ProductOrderContract.InvoiceRequest dto) {
+        List<ProductOrderDetail> details = dto.detailRequests().stream().map(detailRequest -> {
+            ProductOrderDetail detail = new ProductOrderDetail();
+            detail.setProductId(detailRequest.productId());
+            detail.setQuantity(detailRequest.quantity());
+            detail.setRacketRentTime(detailRequest.racketRentTime());
+            detail.setDraft(true);
+            detail.setCourtOrder(entity);
+            return detail;
+        }).toList();
+        entity.setProductOrderDetails(details);
+    }
+}

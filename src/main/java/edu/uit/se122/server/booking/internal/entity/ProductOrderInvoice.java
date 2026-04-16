@@ -27,6 +27,8 @@ public class ProductOrderInvoice {
 
     private Double totalAmount;
 
+    private Double givenAmount;
+
     private Double changeAmount;
 
     @CreatedDate

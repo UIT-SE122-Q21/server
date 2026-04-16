@@ -7,6 +7,7 @@ import edu.uit.se122.server.inventory.internal.repository.ProductCategoryReposit
 import edu.uit.se122.server.inventory.internal.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 public class ProductService {
     private final ProductRepository productRepository;
     private final ProductCategoryRepository productCategoryRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<ProductContract.Response> getAll() {
         return productRepository.findAll().stream().map(this::mapToDTO).toList();
@@ -42,6 +44,14 @@ public class ProductService {
         product.setProductId(newProductId);
         updateEntity(product, dto);
         Product saved = productRepository.save(product);
+
+        ProductContract.CreatedEvent event = new ProductContract.CreatedEvent(
+                saved.getProductId(),
+                saved.getBarcode(),
+                saved.getName(),
+                saved.getUnitPrice()
+        );
+        eventPublisher.publishEvent(event);
     }
 
     public void update(Integer id, ProductContract.Request dto) {

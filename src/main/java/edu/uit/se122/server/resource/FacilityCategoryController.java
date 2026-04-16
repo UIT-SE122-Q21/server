@@ -16,6 +16,7 @@ public class FacilityCategoryController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody FacilityCategoryContract.Request dto) {
+        facilityCategoryService.create(dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
@@ -31,6 +32,7 @@ public class FacilityCategoryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody FacilityCategoryContract.Request dto) {
+        facilityCategoryService.update(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 

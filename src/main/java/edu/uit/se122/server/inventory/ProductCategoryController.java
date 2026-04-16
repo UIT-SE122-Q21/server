@@ -17,6 +17,7 @@ public class ProductCategoryController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody ProductCategoryContract.Request dto) {
+        productCategoryService.create(dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
@@ -32,6 +33,7 @@ public class ProductCategoryController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProductCategoryContract.Request dto) {
+        productCategoryService.update(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 

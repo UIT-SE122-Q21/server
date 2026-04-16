@@ -17,6 +17,7 @@ public class FacilityController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody FacilityContract.CreateRequest dto) {
+        facilityService.create(dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
@@ -32,6 +33,7 @@ public class FacilityController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody FacilityContract.UpdateRequest dto) {
+        facilityService.update(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 

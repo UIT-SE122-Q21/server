@@ -13,11 +13,11 @@ public class CourtCacheEventListener {
     private final CourtCacheRepository cacheRepository;
 
     @ApplicationModuleListener
-    void onCourtUpdated(CourtContract.CreatedEvent event) {
+    void onCourtUpdated(CourtContract.CreatedEvent dto) {
         CourtCache courtCache = new CourtCache();
-        courtCache.setCourtId(event.courtId());
-        courtCache.setName(event.name());
-        courtCache.setUnitPrice(event.unitPrice());
+        courtCache.setCourtId(dto.courtId());
+        courtCache.setName(dto.name());
+        courtCache.setUnitPrice(dto.unitPrice());
         cacheRepository.save(courtCache);
     }
 }

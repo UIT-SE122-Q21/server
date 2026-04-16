@@ -26,11 +26,13 @@ public class FacilityCriterionController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestBody FacilityCriterionContract.Request dto) {
+        facilityCriterionService.create(dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody FacilityCriterionContract.Request dto) {
+        facilityCriterionService.update(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 
