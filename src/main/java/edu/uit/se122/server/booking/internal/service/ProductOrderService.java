@@ -8,6 +8,7 @@ import edu.uit.se122.server.booking.internal.entity.ProductOrderInvoice;
 import edu.uit.se122.server.booking.internal.repository.CourtOrderRepository;
 import edu.uit.se122.server.booking.internal.repository.ProductCacheRepository;
 import edu.uit.se122.server.booking.internal.repository.ProductOrderInvoiceRepository;
+import edu.uit.se122.server.inventory.ProductApi;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,11 @@ public class ProductOrderService {
     private final ProductOrderInvoiceRepository invoiceRepository;
     private final CourtOrderRepository courtOrderRepository;
     private final ProductCacheRepository productCacheRepository;
+    private final ProductApi productApi;
 
     public void calculateInvoiceByAdmin(ProductOrderContract.InvoiceRequest dto) {
         double totalAmount = 0;
-        double changeAmount = 0;
+        double changeAmount;
         CourtOrder courtOrder = courtOrderRepository.findById(dto.courtOrderId())
                 .orElseThrow(() -> new RuntimeException("Court order not found"));
 
@@ -37,6 +39,8 @@ public class ProductOrderService {
                 totalAmount += productCache.getUnitPrice() * detail.quantity() * detail.racketRentTime();
             }
         }
+        productApi.DecreaseQuantity(dto.detailRequests());
+
         changeAmount = dto.givenAmount() - totalAmount;
         updateEntity(courtOrder, dto);
         ProductOrderInvoice invoice = new ProductOrderInvoice();
