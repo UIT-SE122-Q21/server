@@ -1,18 +1,24 @@
 package edu.uit.se122.server.resource.internal.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import edu.uit.se122.server.common.enums.CourtStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Court")
 @Data
 @EntityListeners(AuditingEntityListener.class)
+@ToString(exclude = {"maintains"})
+@EqualsAndHashCode(exclude = {"maintains"})
 public class Court {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,4 +41,8 @@ public class Court {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "court", cascade = CascadeType.ALL)
+    @JsonBackReference(value = "maintains_court")
+    private List<Maintain> maintains;
 }

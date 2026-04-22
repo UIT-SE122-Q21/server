@@ -11,13 +11,14 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Facility")
 @Data
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = "category")
-@EqualsAndHashCode(exclude = "category")
+@ToString(exclude = {"category", "maintain"})
+@EqualsAndHashCode(exclude = {"category", "maintain"})
 public class Facility {
     @Id
     private Integer facilityId;
@@ -40,4 +41,8 @@ public class Facility {
     @JoinColumn(name = "FacilityCategoryId")
     @JsonBackReference(value = "facilities")
     private FacilityCategory category;
+
+    @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL)
+    @JsonBackReference(value = "maintains_facility")
+    private List<Maintain> maintains;
 }

@@ -1,6 +1,6 @@
-package edu.uit.se122.server.maintenance;
+package edu.uit.se122.server.resource;
 
-import edu.uit.se122.server.maintenance.internal.service.BrokenReportService;
+import edu.uit.se122.server.resource.internal.service.BrokenReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;

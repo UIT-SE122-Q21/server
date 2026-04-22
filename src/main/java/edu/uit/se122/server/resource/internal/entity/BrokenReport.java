@@ -1,8 +1,11 @@
-package edu.uit.se122.server.maintenance.internal.entity;
+package edu.uit.se122.server.resource.internal.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.uit.se122.server.common.enums.MaintainStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -14,12 +17,12 @@ import java.time.LocalDateTime;
 @Table(name = "BrokenReport")
 @Data
 @EntityListeners(AuditingEntityListener.class)
+@ToString(exclude = {"category"})
+@EqualsAndHashCode(exclude = {"category"})
 public class BrokenReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer brokenReportId;
-
-    private Boolean guest;
 
     @Enumerated(EnumType.STRING)
     private MaintainStatus status;
@@ -37,9 +40,12 @@ public class BrokenReport {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    private Integer facilityCategoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "facilityCategoryId")
+    @JsonManagedReference(value = "reports_category")
+    private FacilityCategory category;
 
     @CreatedBy
     @Column(updatable = false)
-    private String userId;
+    private Integer userId;
 }

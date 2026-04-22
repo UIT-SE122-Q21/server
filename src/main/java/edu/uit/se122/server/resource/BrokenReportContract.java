@@ -1,4 +1,4 @@
-package edu.uit.se122.server.maintenance;
+package edu.uit.se122.server.resource;
 
 import edu.uit.se122.server.common.enums.MaintainStatus;
 
@@ -6,14 +6,14 @@ import java.time.LocalDateTime;
 
 public interface BrokenReportContract {
     record Request(
-        MaintainStatus status,
         String content,
-        String attachment
+        String attachment,
+        Integer categoryId
     ) {}
 
     record Response(
         Integer brokenReportId,
-        Boolean guest,
+        String categoryName,
         MaintainStatus status,
         String content,
         String attachment,
