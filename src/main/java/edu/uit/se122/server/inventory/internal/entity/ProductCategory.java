@@ -22,6 +22,10 @@ public class ProductCategory {
 
     private String description;
 
+    private String backgroundColor;
+
+    private String textColor;
+
     // Navigation Property: Danh sách sản phẩm thuộc loại này
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @JsonManagedReference(value = "products")

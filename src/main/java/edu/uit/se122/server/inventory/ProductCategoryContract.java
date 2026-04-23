@@ -1,14 +1,18 @@
 package edu.uit.se122.server.inventory;
 
 public interface ProductCategoryContract {
-    record Response(
+    record Res(
             String productCategoryId,
             String name,
-            String description
+            String description,
+            String backgroundColor,
+            String textColor
     ) {}
 
-    record Request(
+    record Req(
             String name,
-            String description
+            String description,
+            String backgroundColor,
+            String textColor
     ) {}
 }

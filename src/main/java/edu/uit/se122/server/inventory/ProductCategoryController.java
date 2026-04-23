@@ -16,23 +16,23 @@ public class ProductCategoryController {
     private final ProductCategoryService productCategoryService;
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody ProductCategoryContract.Request dto) {
+    public ResponseEntity<Object> create(@RequestBody ProductCategoryContract.Req dto) {
         productCategoryService.create(dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductCategoryContract.Response>> getAll() {
+    public ResponseEntity<List<ProductCategoryContract.Res>> getAll() {
         return ResponseEntity.ok(productCategoryService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductCategoryContract.Response> getById(@PathVariable Integer id) {
+    public ResponseEntity<ProductCategoryContract.Res> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(productCategoryService.getById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProductCategoryContract.Request dto) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProductCategoryContract.Req dto) {
         productCategoryService.update(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }

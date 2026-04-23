@@ -15,22 +15,22 @@ import java.util.List;
 public class ProductCategoryService {
     private final ProductCategoryRepository productCategoryRepository;
 
-    public List<ProductCategoryContract.Response> getAll() {
+    public List<ProductCategoryContract.Res> getAll() {
         return productCategoryRepository.findAll().stream().map(this::mapToDTO).toList();
     }
 
-    public ProductCategoryContract.Response getById(Integer id) {
+    public ProductCategoryContract.Res getById(Integer id) {
         return productCategoryRepository.findById(id).map(this::mapToDTO)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
     }
 
-    public void create(ProductCategoryContract.Request dto) {
+    public void create(ProductCategoryContract.Req dto) {
         ProductCategory category = new ProductCategory();
         updateEntity(category, dto);
         ProductCategory saved = productCategoryRepository.save(category);
     }
 
-    public void update(Integer id, ProductCategoryContract.Request dto) {
+    public void update(Integer id, ProductCategoryContract.Req dto) {
         ProductCategory category = productCategoryRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         updateEntity(category, dto);
@@ -39,17 +39,21 @@ public class ProductCategoryService {
 
     public void delete(Integer id) { productCategoryRepository.deleteById(id); }
 
-    private void updateEntity(ProductCategory entity, ProductCategoryContract.Request dto) {
+    private void updateEntity(ProductCategory entity, ProductCategoryContract.Req dto) {
         entity.setName(dto.name());
         entity.setDescription(dto.description());
+        entity.setBackgroundColor(dto.backgroundColor());
+        entity.setTextColor(dto.textColor());
     }
 
-    private ProductCategoryContract.Response mapToDTO(ProductCategory entity) {
+    private ProductCategoryContract.Res mapToDTO(ProductCategory entity) {
         String formattedCategoryId = String.format("%03d", entity.getProductCategoryId());
-        return new ProductCategoryContract.Response(
+        return new ProductCategoryContract.Res(
                 formattedCategoryId,
                 entity.getName(),
-                entity.getDescription()
+                entity.getDescription(),
+                entity.getBackgroundColor(),
+                entity.getTextColor()
         );
     }
 }
