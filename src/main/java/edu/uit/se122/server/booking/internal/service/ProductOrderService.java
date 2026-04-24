@@ -31,13 +31,9 @@ public class ProductOrderService {
                 .orElseThrow(() -> new RuntimeException("Court order not found"));
 
         for (ProductOrderContract.DetailRequest detail : dto.detailRequests()) {
-            ProductCache productCache = productCacheRepository.findById(detail.productId())
+            ProductCache productCache = productCacheRepository.findById(detail.productDetailId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
-            if (detail.racketRentTime() == null) {
-                totalAmount += productCache.getUnitPrice() * detail.quantity();
-            } else {
-                totalAmount += productCache.getUnitPrice() * detail.quantity() * detail.racketRentTime();
-            }
+            totalAmount += productCache.getUnitPrice() * detail.quantity();
         }
         productApi.DecreaseQuantity(dto.detailRequests());
 
@@ -54,9 +50,8 @@ public class ProductOrderService {
     private void updateEntity(CourtOrder entity, ProductOrderContract.InvoiceRequest dto) {
         List<ProductOrderDetail> details = dto.detailRequests().stream().map(detailRequest -> {
             ProductOrderDetail detail = new ProductOrderDetail();
-            detail.setProductId(detailRequest.productId());
+            detail.setProductId(detailRequest.productDetailId());
             detail.setQuantity(detailRequest.quantity());
-            detail.setRacketRentTime(detailRequest.racketRentTime());
             detail.setDraft(true);
             detail.setCourtOrder(entity);
             return detail;

@@ -2,8 +2,8 @@ package edu.uit.se122.server.inventory.internal.impl;
 
 import edu.uit.se122.server.booking.ProductOrderContract;
 import edu.uit.se122.server.inventory.ProductApi;
-import edu.uit.se122.server.inventory.internal.entity.Product;
-import edu.uit.se122.server.inventory.internal.repository.ProductRepository;
+import edu.uit.se122.server.inventory.internal.entity.ProductDetail;
+import edu.uit.se122.server.inventory.internal.repository.ProductDetailRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,16 +14,16 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class ProductApiImpl implements ProductApi {
-    private final ProductRepository productRepository;
+    private final ProductDetailRepository detailRepository;
 
     @Override
     public void DecreaseQuantity(List<ProductOrderContract.DetailRequest> list) {
         for (ProductOrderContract.DetailRequest detailRequest : list) {
-            Product product = productRepository.findById(detailRequest.productId())
+            ProductDetail detail = detailRepository.findById(detailRequest.productDetailId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
-            int newQuantity = product.getQuantity() - detailRequest.quantity();
-            product.setQuantity(newQuantity);
-            productRepository.save(product);
+            int newQuantity = detail.getQuantity() - detailRequest.quantity();
+            detail.setQuantity(newQuantity);
+            detailRepository.save(detail);
         }
     }
 }

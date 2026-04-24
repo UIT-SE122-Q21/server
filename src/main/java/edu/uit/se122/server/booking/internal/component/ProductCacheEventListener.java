@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @RequiredArgsConstructor
 public class ProductCacheEventListener {
@@ -15,7 +17,7 @@ public class ProductCacheEventListener {
     @ApplicationModuleListener
     void onProductUpdated(ProductContract.CreatedEvent dto) {
         ProductCache productCache = new ProductCache();
-        productCache.setProductId(dto.productId());
+        productCache.setProductDetailId(dto.productDetailId());
         productCache.setBarcode(dto.barcode());
         productCache.setName(dto.name());
         productCache.setUnitPrice(dto.unitPrice());

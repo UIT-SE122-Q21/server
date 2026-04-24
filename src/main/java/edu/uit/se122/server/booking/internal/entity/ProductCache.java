@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class ProductCache {
     @Id
-    private Integer productId;
+    private Integer productDetailId;
     private String barcode;
     private String name;
     private Double unitPrice;

@@ -2,10 +2,13 @@ package edu.uit.se122.server.inventory.internal.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import edu.uit.se122.server.common.enums.ProductStatus;
+import edu.uit.se122.server.common.enums.SaleType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Product")
@@ -14,20 +17,14 @@ import lombok.ToString;
 @EqualsAndHashCode(exclude = "category")
 public class Product {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productId;
-
-    @Column(unique = true, nullable = false)
-    private String barcode;
 
     private String name;
 
+    private String capacity;
+
     private String attachment;
-
-    private Double unitPrice;
-
-    private Integer quantity;
-
-    private Integer minQuantity;
 
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
@@ -37,4 +34,8 @@ public class Product {
     @JoinColumn(name = "ProductCategoryId")
     @JsonBackReference(value = "products")
     private ProductCategory category;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonBackReference(value = "details_product")
+    private List<ProductDetail> details;
 }

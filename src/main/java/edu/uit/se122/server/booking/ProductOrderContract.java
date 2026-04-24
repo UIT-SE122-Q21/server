@@ -4,9 +4,8 @@ import java.util.List;
 
 public interface ProductOrderContract {
     record DetailRequest(
-            Integer productId,
-            Integer quantity,
-            Double racketRentTime
+            Integer productDetailId,
+            Integer quantity
     ) {}
 
     record InvoiceRequest(

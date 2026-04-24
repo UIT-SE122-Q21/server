@@ -18,8 +18,6 @@ public class ProductOrderDetail {
 
     private Integer quantity;
 
-    private Double racketRentTime;
-
     private Double unitDiscount;
 
     private Boolean draft;
