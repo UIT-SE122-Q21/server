@@ -10,36 +10,50 @@ public interface ProductContract {
             Integer productId,
             String productName,
             String capacity,
-            ProductStatus status,
+            Integer categoryId,
             String categoryName,
-            List<DetailRes> detailResList
+            List<DetailRes> details
     ) {}
 
     record DetailRes(
-            String productDetailId,
+            Integer productDetailId,
             String barcode,
             String unit,
             Double unitPrice,
             SaleType saleType,
             Integer quantity,
-            Integer minQuantity
+            Integer minQuantity,
+            ProductStatus status
     ) {}
 
     record Req(
             String productName,
             String capacity,
-            ProductStatus status,
             Integer categoryId,
-            List<DetailReq> detailReqs
+            List<DetailReq> details
+    ) {}
+
+    record UpdateReq(
+            String productName,
+            String capacity,
+            Integer categoryId,
+            List<DetailUpdateReq> details
     ) {}
 
     record DetailReq(
             String barcode,
             String unit,
             Double unitPrice,
+            SaleType saleType
+    ) {}
+
+    record DetailUpdateReq(
+            Integer productDetailId,
+            String barcode,
+            String unit,
+            Double unitPrice,
             SaleType saleType,
-            Integer quantity,
-            Integer minQuantity
+            ProductStatus status
     ) {}
 
     record CreatedEvent(

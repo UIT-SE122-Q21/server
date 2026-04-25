@@ -26,9 +26,6 @@ public class Product {
 
     private String attachment;
 
-    @Enumerated(EnumType.STRING)
-    private ProductStatus status;
-
     // Navigation Property: Trỏ ngược về Category
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ProductCategoryId")

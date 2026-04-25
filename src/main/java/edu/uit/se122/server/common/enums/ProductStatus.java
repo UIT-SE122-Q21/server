@@ -1,3 +1,3 @@
 package edu.uit.se122.server.common.enums;
 
-public enum ProductStatus { Available, Stockout }
+public enum ProductStatus { Available, Stockout, Suspend }

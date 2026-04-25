@@ -31,7 +31,7 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProductContract.Req dto) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProductContract.UpdateReq dto) {
         productService.update(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }

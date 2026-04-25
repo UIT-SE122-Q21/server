@@ -1,11 +1,14 @@
 package edu.uit.se122.server.inventory.internal.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import edu.uit.se122.server.common.enums.ProductStatus;
 import edu.uit.se122.server.common.enums.SaleType;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ProductDetail")
@@ -22,14 +25,18 @@ public class ProductDetail {
 
     private Double unitPrice;
 
+    @Enumerated(EnumType.STRING)
     private SaleType saleType;
 
     private Integer quantity;
 
     private Integer minQuantity;
 
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productId")
-    @JsonManagedReference(value = "details_product")
+    @JsonBackReference(value = "details_product")
     private Product product;
 }

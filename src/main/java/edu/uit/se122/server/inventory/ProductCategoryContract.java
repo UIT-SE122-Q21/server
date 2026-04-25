@@ -2,7 +2,7 @@ package edu.uit.se122.server.inventory;
 
 public interface ProductCategoryContract {
     record Res(
-            String productCategoryId,
+            Integer productCategoryId,
             String name,
             String description,
             String backgroundColor,

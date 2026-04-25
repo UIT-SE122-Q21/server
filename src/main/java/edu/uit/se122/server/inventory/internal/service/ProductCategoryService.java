@@ -47,9 +47,9 @@ public class ProductCategoryService {
     }
 
     private ProductCategoryContract.Res mapToDTO(ProductCategory entity) {
-        String formattedCategoryId = String.format("%03d", entity.getProductCategoryId());
+//        String formattedCategoryId = String.format("%03d", entity.getProductCategoryId());
         return new ProductCategoryContract.Res(
-                formattedCategoryId,
+                entity.getProductCategoryId(),
                 entity.getName(),
                 entity.getDescription(),
                 entity.getBackgroundColor(),
