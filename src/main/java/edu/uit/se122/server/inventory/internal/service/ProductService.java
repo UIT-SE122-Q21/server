@@ -125,9 +125,10 @@ public class ProductService {
                 detail.setQuantity(0);
                 detail.setMinQuantity(0);
                 detail.setStatus(ProductStatus.Available);
+                detail.setProduct(entity);
+                entity.getDetails().add(detail);
                 indexOfDetails.getAndIncrement();
             }
-            detail.setProduct(entity);
         }
     }
 

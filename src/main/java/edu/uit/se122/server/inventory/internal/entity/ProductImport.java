@@ -19,9 +19,9 @@ public class ProductImport {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer importId;
 
-    private String barcode;
-
     private Integer quantity;
+
+    private String note;
 
     @Enumerated(EnumType.STRING)
     private ImportStatus status;
@@ -34,7 +34,7 @@ public class ProductImport {
     private LocalDateTime updateAt;
 
     @ManyToOne
-    @JoinColumn(name = "ProductId")
+    @JoinColumn(name = "productDetailId")
     @JsonIgnore
-    private Product product;
+    private ProductDetail detail;
 }
