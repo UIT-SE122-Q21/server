@@ -76,6 +76,15 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public void updateQuantity(ProductContract.UpdateQuantityReq dto) {
+        ProductDetail detail = detailRepository.findById(dto.productDetailId())
+                .orElseThrow(() -> new RuntimeException("Product detail not found"));
+
+        Integer newQuantity = detail.getQuantity() + dto.quantity();
+        detail.setQuantity(newQuantity);
+        detailRepository.save(detail);
+    }
+
     public void delete(Integer id) { productRepository.deleteById(id); }
 
     private void updateEntity(Product entity, ProductContract.Req dto, ProductCategory category, Integer maxId) {

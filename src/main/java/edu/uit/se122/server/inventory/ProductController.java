@@ -36,6 +36,12 @@ public class ProductController {
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 
+    @PutMapping("/{id}/quantity")
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProductContract.UpdateQuantityReq dto) {
+        productService.updateQuantity(dto);
+        return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> delete(@PathVariable Integer id) {
         productService.delete(id);

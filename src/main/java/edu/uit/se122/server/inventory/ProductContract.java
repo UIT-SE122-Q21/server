@@ -47,6 +47,11 @@ public interface ProductContract {
             SaleType saleType
     ) {}
 
+    record UpdateQuantityReq(
+            Integer productDetailId,
+            Integer quantity
+    ) {}
+
     record DetailUpdateReq(
             Integer productDetailId,
             String barcode,
