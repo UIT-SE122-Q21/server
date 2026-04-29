@@ -2,7 +2,6 @@ package edu.uit.se122.server.identity.internal.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.uit.se122.server.common.enums.AdminRole;
-import edu.uit.se122.server.inventory.internal.entity.Product;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -25,7 +24,7 @@ public class Administrator {
     @Enumerated(EnumType.STRING)
     private AdminRole role;
 
-    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "employeeSchedules")
-    private List<EmployeeSchedule> employeeSchedules;
+    @OneToMany(mappedBy = "admin", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference(value = "admin-adminSchedules")
+    private List<AdminSchedule> adminSchedules;
 }
