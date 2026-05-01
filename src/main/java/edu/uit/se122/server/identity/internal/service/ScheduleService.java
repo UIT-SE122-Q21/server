@@ -10,7 +10,11 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,16 +27,9 @@ public class ScheduleService {
         return scheduleRepository.findAll().stream().map(this::mapToDTO).toList();
     }
 
-    public void create(ScheduleContract.Req dto) {
-        if (dto.adminIds() == null || dto.adminIds().isEmpty()) {
-            throw new RuntimeException("Admin list must not be empty");
-        }
-
+    public void create(ScheduleContract.CreateReq dto) {
+        validateAdmins(dto.adminIds());
         List<Administrator> admins = administratorRepository.findAllById(dto.adminIds());
-
-        if (admins.size() != dto.adminIds().size()) {
-            throw new RuntimeException("One or more admins not found");
-        }
 
         Schedule schedule = new Schedule();
         schedule.setWorkDate(dto.workDate());
@@ -40,29 +37,47 @@ public class ScheduleService {
         schedule.setFromTime(dto.fromTime());
         schedule.setToTime(dto.toTime());
 
-        List<AdminSchedule> adminSchedules = admins.stream()
+        List<AdminSchedule> adminSchedules = createAdminSchedules(admins, schedule);
+        schedule.setAdminSchedules(adminSchedules);
+
+        scheduleRepository.save(schedule);
+    }
+
+    public void update(Integer id, ScheduleContract.UpdateReq dto) {
+        validateAdmins(dto.adminIds());
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+        List<Administrator> admins = administratorRepository.findAllById(dto.adminIds());
+
+        schedule.setFromTime(dto.fromTime());
+        schedule.setToTime(dto.toTime());
+
+        Set<Integer> requestedAdminIds = new HashSet<>(dto.adminIds());
+
+        schedule.getAdminSchedules().removeIf(adminSchedule ->
+                !requestedAdminIds.contains(adminSchedule.getAdmin().getAdminId())
+        );
+
+        Set<Integer> existingAdminIds = schedule.getAdminSchedules().stream()
+                .map(adminSchedule -> adminSchedule.getAdmin().getAdminId())
+                .collect(Collectors.toSet());
+
+        admins.stream()
+                .filter(admin -> !existingAdminIds.contains(admin.getAdminId()))
                 .map(admin -> {
                     AdminSchedule adminSchedule = new AdminSchedule();
                     adminSchedule.setAdmin(admin);
                     adminSchedule.setSchedule(schedule);
                     return adminSchedule;
                 })
-                .toList();
-
-        schedule.setAdminSchedules(adminSchedules);
-
-        scheduleRepository.save(schedule);
+                .forEach(schedule.getAdminSchedules()::add);
     }
 
     private ScheduleContract.Res mapToDTO(Schedule entity) {
-        List<ScheduleContract.AdminRes> admins = entity.getAdminSchedules().stream()
+        List<Integer> admins = entity.getAdminSchedules().stream()
                 .map(adminSchedule -> {
                     Administrator admin = adminSchedule.getAdmin();
-
-                    return new ScheduleContract.AdminRes(
-                            admin.getAdminId(),
-                            admin.getName()
-                    );
+                    return admin.getAdminId();
                 })
                 .toList();
 
@@ -74,5 +89,27 @@ public class ScheduleService {
                 entity.getToTime(),
                 admins
         );
+    }
+
+    private void validateAdmins(List<Integer> adminIds) {
+        if (adminIds == null || adminIds.isEmpty()) {
+            throw new RuntimeException("Admin list must not be empty");
+        }
+
+        List<Administrator> admins = administratorRepository.findAllById(adminIds);
+        if (admins.size() != adminIds.size()) {
+            throw new RuntimeException("One or more admins not found");
+        }
+    }
+
+    private List<AdminSchedule> createAdminSchedules(List<Administrator> admins, Schedule schedule) {
+        return admins.stream()
+                .map(admin -> {
+                    AdminSchedule adminSchedule = new AdminSchedule();
+                    adminSchedule.setAdmin(admin);
+                    adminSchedule.setSchedule(schedule);
+                    return adminSchedule;
+                })
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 }

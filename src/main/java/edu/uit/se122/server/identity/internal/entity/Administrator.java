@@ -19,7 +19,11 @@ public class Administrator {
 
     private String email;
 
+    private String phoneNumber;
+
     private String password;
+
+    private String color;
 
     @Enumerated(EnumType.STRING)
     private AdminRole role;

@@ -19,13 +19,24 @@ public interface ScheduleContract {
             Integer dayOfWeek,
             LocalTime fromTime,
             LocalTime toTime,
-            List<AdminRes> admins
+            List<Integer> adminIds
     ) {}
 
-    record Req(
+    record CreateReq(
             LocalDate workDate,
             Integer dayOfWeek,
 
+            @JsonFormat(pattern = "HH:mm:ss")
+            @Schema(type = "string", example = "08:00:00")
+            LocalTime fromTime,
+
+            @JsonFormat(pattern = "HH:mm:ss")
+            @Schema(type = "string", example = "10:00:00")
+            LocalTime toTime,
+            List<Integer> adminIds
+    ) {}
+
+    record UpdateReq(
             @JsonFormat(pattern = "HH:mm:ss")
             @Schema(type = "string", example = "08:00:00")
             LocalTime fromTime,
