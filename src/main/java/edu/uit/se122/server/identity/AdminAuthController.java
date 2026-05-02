@@ -17,7 +17,7 @@ public class AdminAuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody AuthContract.RegisterAdminRequest dto) {
+    public ResponseEntity<Object> register(@RequestBody AuthContract.AdminRegisterReq dto) {
         authService.registerAdmin(dto);
         return ResponseEntity.ok(Map.of("message", "Đăng ký thành công"));
     }

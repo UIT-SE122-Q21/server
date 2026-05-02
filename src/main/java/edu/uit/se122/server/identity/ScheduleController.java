@@ -31,4 +31,10 @@ public class ScheduleController {
         scheduleService.update(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@PathVariable Integer id) {
+        scheduleService.delete(id);
+        return ResponseEntity.ok(Map.of("message", "Xóa thành công"));
+    }
 }

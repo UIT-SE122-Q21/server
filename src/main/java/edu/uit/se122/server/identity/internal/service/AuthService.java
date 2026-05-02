@@ -38,7 +38,7 @@ public class AuthService {
     @Value("${app.base-url}")
     private String baseUrl;
 
-    public void registerAdmin(AuthContract.RegisterAdminRequest dto) {
+    public void registerAdmin(AuthContract.AdminRegisterReq dto) {
         Integer maxId = administratorRepository.findMaxAdminId();
         int newMemberId;
         if (maxId == null) {
@@ -143,11 +143,12 @@ public class AuthService {
         );
     }
 
-    private void updateAdminEntity(Administrator entity, AuthContract.RegisterAdminRequest dto) {
+    private void updateAdminEntity(Administrator entity, AuthContract.AdminRegisterReq dto) {
         entity.setName(dto.name());
         entity.setEmail(dto.email());
         entity.setPassword(passwordEncoder.encode(dto.password()));
-        entity.setRole(dto.role() != null ? dto.role() : AdminRole.Manager);
+        entity.setColor("#E6F1FB");
+        entity.setRole(AdminRole.Employee);
     }
 
     public void updateMemberEntity(Member entity, AuthContract.RegisterMemberRequest dto) {

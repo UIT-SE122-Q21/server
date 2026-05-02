@@ -11,4 +11,11 @@ public interface AdminContract {
             String color,
             AdminRole role
     ) {}
+
+    record UpdateReq(
+            String adminName,
+            String email,
+            String phoneNumber,
+            String color
+    ) {}
 }

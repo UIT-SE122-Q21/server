@@ -1,13 +1,10 @@
 package edu.uit.se122.server.identity;
 
-import edu.uit.se122.server.common.enums.AdminRole;
-
 public interface AuthContract {
-    record RegisterAdminRequest(
+    record AdminRegisterReq(
             String name,
             String email,
-            String password,
-            AdminRole role
+            String password
     ) {}
 
     record RegisterMemberRequest(

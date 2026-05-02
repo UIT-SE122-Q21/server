@@ -73,6 +73,10 @@ public class ScheduleService {
                 .forEach(schedule.getAdminSchedules()::add);
     }
 
+    public void delete(Integer id) {
+        scheduleRepository.deleteById(id);
+    }
+
     private ScheduleContract.Res mapToDTO(Schedule entity) {
         List<Integer> admins = entity.getAdminSchedules().stream()
                 .map(adminSchedule -> {
