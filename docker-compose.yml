@@ -1,0 +1,23 @@
+version: '4.59.0'
+services:
+  db:
+    image: postgres:latest
+    container_name: POSTGRES01
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1Uch@mch0td@!
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: .
+    container_name: server
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/server
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=1Uch@mch0td@!
