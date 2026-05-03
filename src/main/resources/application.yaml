@@ -4,8 +4,8 @@ spring:
   datasource:
     # Thêm tham số currentSchema và quan trọng nhất là gán múi giờ trực tiếp vào URL
     url: jdbc:postgresql://localhost:5432/postgres?options=-c%20timezone=Asia/Ho_Chi_Minh
-    username: postgres
-    password: 1Uch@mch0td@!
+    username: ${POSTGRES_USERNAME:your_postgres_username}
+    password: ${POSTGRES_PASSWORD:your_postgres_password}
     driver-class-name: org.postgresql.Driver
   # Cấu hình Jackson để ResponseWrapperAdvice format thời gian đúng chuẩn
   jackson:
