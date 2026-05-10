@@ -1,10 +1,10 @@
 services:
   db:
     image: postgres:latest
-    container_name: POSTGRES01
+    container_name: BadmintonCourt
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1Uch@mch0td@!
+      POSTGRES_USER: ${POSTGRES_USERNAME:username_of_postgres_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:password_of_postgres_user}
       POSTGRES_DB: postgres
     ports:
       - "5432:5432"
@@ -18,5 +18,9 @@ services:
       - db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=1Uch@mch0td@!
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME:username_of_postgres_user}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:password_of_postgres_user}
+      - SPRING_MAIL_USERNAME=${BREVO_LOGIN:email_username}
+      - SPRING_MAIL_PASSWORD=${BREVO_PASSWORD:email_password}
+      - SPRING_MAIL_SENDER=${BREVO_EMAIL:email_sender}
+      - APP_JWT_SECRET=${JWT_SECRET:jwt_secret}

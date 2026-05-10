@@ -3,12 +3,12 @@ spring:
     name: server
   datasource:
     # Thêm tham số currentSchema và quan trọng nhất là gán múi giờ trực tiếp vào URL
-    url: jdbc:postgresql://localhost:5432/postgres?options=-c%20timezone=Asia/Ho_Chi_Minh
+    url: jdbc:postgresql://localhost:5432/postgres
     username: ${POSTGRES_USERNAME:your_postgres_username}
     password: ${POSTGRES_PASSWORD:your_postgres_password}
     driver-class-name: org.postgresql.Driver
   # Cấu hình Jackson để ResponseWrapperAdvice format thời gian đúng chuẩn
-  jackson:
+  Jackson:
     time-zone: Asia/Ho_Chi_Minh
     date-format: yyyy-MM-dd HH:mm:ss
   jpa:
@@ -20,8 +20,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
         highlight_sql: true
-        # Đảm bảo Hibernate gửi đúng múi giờ cho PostgreSQL
-        jdbc.time_zone: Asia/Ho_Chi_Minh
     open-in-view: true
   mail:
     host: smtp-relay.brevo.com
@@ -31,9 +29,9 @@ spring:
     sender: ${BREVO_EMAIL:email_da_dang_ky_Brevo}
     properties:
       mail:
-        smtp:
+        SMTP:
           auth: true
-          starttls:
+          STARTTLS:
             enable: true
 app:
   jwt:

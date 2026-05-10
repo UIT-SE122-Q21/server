@@ -9,7 +9,6 @@ import java.util.TimeZone;
 public class ServerApplication {
 
     public static void main(String[] args) {
-        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         SpringApplication.run(ServerApplication.class, args);
     }
 
