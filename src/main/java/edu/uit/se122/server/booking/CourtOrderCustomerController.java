@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/order/court")
+@RequestMapping("/api/customer/order/court")
 @RequiredArgsConstructor
-public class CourtOrderController {
+public class CourtOrderCustomerController {
     private final CourtOrderService courtOrderService;
 
     @GetMapping
@@ -28,7 +28,7 @@ public class CourtOrderController {
     @PostMapping
     public ResponseEntity<Object> create(
             @AuthenticationPrincipal Integer userId,
-            @RequestBody CourtOrderContract.Request dto
+            @RequestBody CourtOrderContract.CreateByCustomerReq dto
     ) {
         courtOrderService.createByUser(userId, dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));

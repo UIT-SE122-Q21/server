@@ -42,6 +42,7 @@ app:
 springdoc:
   swagger-ui:
     disable-swagger-default-url: true
+    tags-sorter: alpha
     operations-sorter: alpha
   api-docs:
     path: /v3/api-docs

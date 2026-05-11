@@ -9,11 +9,13 @@ import java.time.LocalTime;
 import java.util.List;
 
 public interface CourtOrderContract {
-    record Request(
+    record CreateByAdminReq(
             LocalDate orderDate,
-            OrderStatus status,
-            Integer adminId,
-            Integer userId,
+            List<DetailRequest> detailRequests
+    ) {}
+
+    record CreateByCustomerReq(
+            LocalDate orderDate,
             List<DetailRequest> detailRequests,
             String guestName,
             String guestEmail,

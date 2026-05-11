@@ -5,6 +5,7 @@ import edu.uit.se122.server.common.enums.LoginRole;
 import edu.uit.se122.server.common.enums.TokenType;
 import edu.uit.se122.server.common.security.JwtService;
 import edu.uit.se122.server.identity.AuthContract;
+import edu.uit.se122.server.identity.MemberContract;
 import edu.uit.se122.server.identity.internal.entity.Administrator;
 import edu.uit.se122.server.identity.internal.entity.Member;
 import edu.uit.se122.server.identity.internal.entity.MemberToken;
@@ -16,6 +17,7 @@ import edu.uit.se122.server.identity.internal.repository.RefreshTokenRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailService emailService;
     private final RefreshTokenService refreshTokenService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${app.base-url}")
     private String baseUrl;
@@ -90,6 +93,12 @@ public class AuthService {
         member.setVerified(true);
         memberRepository.save(member);
         memberTokenRepository.delete(memberToken);
+
+        MemberContract.VerifiedEvent event = new MemberContract.VerifiedEvent(
+                member.getMemberId(),
+                member.getName()
+        );
+        eventPublisher.publishEvent(event);
     }
 
     public AuthContract.LoginAdminResponse loginAdmin(AuthContract.LoginAdminRequest dto) {

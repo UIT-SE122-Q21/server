@@ -20,7 +20,7 @@ public class CourtOrderAdminController {
     @PostMapping
     public ResponseEntity<Object> create(
             @AuthenticationPrincipal Integer adminId,
-            @RequestBody CourtOrderContract.Request dto
+            @RequestBody CourtOrderContract.CreateByAdminReq dto
     ) {
         courtOrderService.createByAdmin(adminId, dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));

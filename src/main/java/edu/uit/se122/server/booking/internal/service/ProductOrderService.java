@@ -1,11 +1,9 @@
 package edu.uit.se122.server.booking.internal.service;
 
 import edu.uit.se122.server.booking.ProductOrderContract;
-import edu.uit.se122.server.booking.internal.entity.CourtOrder;
-import edu.uit.se122.server.booking.internal.entity.ProductCache;
-import edu.uit.se122.server.booking.internal.entity.ProductOrderDetail;
-import edu.uit.se122.server.booking.internal.entity.ProductOrderInvoice;
+import edu.uit.se122.server.booking.internal.entity.*;
 import edu.uit.se122.server.booking.internal.repository.CourtOrderRepository;
+import edu.uit.se122.server.booking.internal.repository.MemberCacheRepository;
 import edu.uit.se122.server.booking.internal.repository.ProductCacheRepository;
 import edu.uit.se122.server.booking.internal.repository.ProductOrderInvoiceRepository;
 import edu.uit.se122.server.inventory.ProductApi;
@@ -25,7 +23,12 @@ public class ProductOrderService {
     private final ProductOrderInvoiceRepository invoiceRepository;
     private final CourtOrderRepository courtOrderRepository;
     private final ProductCacheRepository productCacheRepository;
+    private final MemberCacheRepository memberCacheRepository;
     private final ProductApi productApi;
+
+    public List<ProductOrderContract.OrderHistoryRes> getOrderHistory() {
+        return courtOrderRepository.findAll().stream().map(this::mapToDTO).toList();
+    }
 
     public void createOrderByCustomer(ProductOrderContract.CreateOrderByCustomer dto) {
         CourtOrder courtOrder = courtOrderRepository.findById(dto.courtOrderId())
@@ -81,5 +84,26 @@ public class ProductOrderService {
             return detail;
         }).collect(Collectors.toCollection(ArrayList::new));
         entity.setProductOrderDetails(details);
+    }
+
+    private ProductOrderContract.OrderHistoryRes mapToDTO(CourtOrder entity) {
+        String customerName;
+        if (entity.getGuest()) {
+            customerName = entity.getGuestName();
+        } else {
+            MemberCache memberCache = memberCacheRepository.findById(entity.getUserId())
+                    .orElseThrow(() -> new RuntimeException("Member not found"));
+            customerName = memberCache.getName();
+        }
+
+        return new ProductOrderContract.OrderHistoryRes(
+                entity.getOrderDate(),
+                customerName,
+                entity.getProductOrderDetails().stream().map(d -> new ProductOrderContract.OrderHistoryDetailRes(
+                        productCacheRepository.findById(d.getProductId()).orElseThrow(() -> new RuntimeException("Product not found")).getProductDetailId(),
+                        productCacheRepository.findById(d.getProductId()).orElseThrow(() -> new RuntimeException("Product not found")).getName(),
+                        d.getQuantity()
+                )).toList()
+        );
     }
 }

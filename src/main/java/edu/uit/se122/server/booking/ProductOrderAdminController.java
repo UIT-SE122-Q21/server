@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -12,6 +13,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class ProductOrderAdminController {
     private final ProductOrderService productOrderService;
+
+    @GetMapping("/history")
+    public ResponseEntity<List<ProductOrderContract.OrderHistoryRes>> getOrderHistory() {
+        return ResponseEntity.ok(productOrderService.getOrderHistory());
+    }
 
     @GetMapping("/calculate")
     public ResponseEntity<ProductOrderContract.CalculateInvoiceRes> calculateInvoice(@RequestBody ProductOrderContract.InvoiceReq dto) {
