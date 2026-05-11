@@ -13,7 +13,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,38 +27,59 @@ public class ProductOrderService {
     private final ProductCacheRepository productCacheRepository;
     private final ProductApi productApi;
 
-    public void calculateInvoiceByAdmin(ProductOrderContract.InvoiceRequest dto) {
-        double totalAmount = 0;
-        double changeAmount;
+    public void createOrderByCustomer(ProductOrderContract.CreateOrderByCustomer dto) {
         CourtOrder courtOrder = courtOrderRepository.findById(dto.courtOrderId())
                 .orElseThrow(() -> new RuntimeException("Court order not found"));
+        List<ProductOrderDetail> details = dto.detailReqs().stream().map(detailReq -> {
+            ProductOrderDetail detail = new ProductOrderDetail();
+            detail.setProductId(detailReq.productDetailId());
+            detail.setQuantity(detailReq.quantity());
+            detail.setDraft(true);
+            detail.setCourtOrder(courtOrder);
+            return detail;
+        }).collect(Collectors.toCollection(ArrayList::new));
+        courtOrder.setProductOrderDetails(details);
+        courtOrderRepository.save(courtOrder);
+    }
 
-        for (ProductOrderContract.DetailRequest detail : dto.detailRequests()) {
+    public ProductOrderContract.CalculateInvoiceRes calculateInvoice(ProductOrderContract.InvoiceReq dto) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal changeAmount;
+
+        for (ProductOrderContract.DetailReq detail : dto.detailReqs()) {
             ProductCache productCache = productCacheRepository.findById(detail.productDetailId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
-            totalAmount += productCache.getUnitPrice() * detail.quantity();
+            totalAmount = totalAmount.add(productCache.getUnitPrice().multiply(BigDecimal.valueOf(detail.quantity())));
         }
-        productApi.DecreaseQuantity(dto.detailRequests());
+        changeAmount = dto.givenAmount().subtract(totalAmount);
+        return new ProductOrderContract.CalculateInvoiceRes(totalAmount, changeAmount);
+    }
 
-        changeAmount = dto.givenAmount() - totalAmount;
+    public void createInvoice(ProductOrderContract.InvoiceReq dto) {
+        ProductOrderContract.CalculateInvoiceRes calculateResult = calculateInvoice(dto);
+
+        CourtOrder courtOrder = courtOrderRepository.findById(dto.courtOrderId())
+                .orElseThrow(() -> new RuntimeException("Court order not found"));
         updateEntity(courtOrder, dto);
+        productApi.DecreaseQuantity(dto.detailReqs());
+
         ProductOrderInvoice invoice = new ProductOrderInvoice();
-        invoice.setTotalAmount(totalAmount);
+        invoice.setTotalAmount(calculateResult.totalAmount());
         invoice.setGivenAmount(dto.givenAmount());
-        invoice.setChangeAmount(changeAmount);
+        invoice.setChangeAmount(calculateResult.changeAmount());
         invoice.setCourtOrder(courtOrder);
         invoiceRepository.save(invoice);
     }
 
-    private void updateEntity(CourtOrder entity, ProductOrderContract.InvoiceRequest dto) {
-        List<ProductOrderDetail> details = dto.detailRequests().stream().map(detailRequest -> {
+    private void updateEntity(CourtOrder entity, ProductOrderContract.InvoiceReq dto) {
+        List<ProductOrderDetail> details = dto.detailReqs().stream().map(detailReq -> {
             ProductOrderDetail detail = new ProductOrderDetail();
-            detail.setProductId(detailRequest.productDetailId());
-            detail.setQuantity(detailRequest.quantity());
-            detail.setDraft(true);
+            detail.setProductId(detailReq.productDetailId());
+            detail.setQuantity(detailReq.quantity());
+            detail.setDraft(false);
             detail.setCourtOrder(entity);
             return detail;
-        }).toList();
+        }).collect(Collectors.toCollection(ArrayList::new));
         entity.setProductOrderDetails(details);
     }
 }

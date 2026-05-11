@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -23,7 +24,7 @@ public class ProductDetail {
 
     private String unit;
 
-    private Double unitPrice;
+    private BigDecimal unitPrice;
 
     @Enumerated(EnumType.STRING)
     private SaleType saleType;

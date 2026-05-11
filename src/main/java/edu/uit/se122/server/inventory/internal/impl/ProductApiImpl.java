@@ -17,11 +17,11 @@ public class ProductApiImpl implements ProductApi {
     private final ProductDetailRepository detailRepository;
 
     @Override
-    public void DecreaseQuantity(List<ProductOrderContract.DetailRequest> list) {
-        for (ProductOrderContract.DetailRequest detailRequest : list) {
-            ProductDetail detail = detailRepository.findById(detailRequest.productDetailId())
+    public void DecreaseQuantity(List<ProductOrderContract.DetailReq> list) {
+        for (ProductOrderContract.DetailReq detailReq : list) {
+            ProductDetail detail = detailRepository.findById(detailReq.productDetailId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
-            int newQuantity = detail.getQuantity() - detailRequest.quantity();
+            int newQuantity = detail.getQuantity() - detailReq.quantity();
             detail.setQuantity(newQuantity);
             detailRepository.save(detail);
         }

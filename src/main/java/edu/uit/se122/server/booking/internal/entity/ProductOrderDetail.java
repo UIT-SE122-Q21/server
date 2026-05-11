@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "ProductOrderDetail")
 @Data
@@ -18,7 +20,7 @@ public class ProductOrderDetail {
 
     private Integer quantity;
 
-    private Double unitDiscount;
+    private BigDecimal unitDiscount;
 
     private Boolean draft;
 

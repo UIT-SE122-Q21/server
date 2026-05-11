@@ -1,16 +1,27 @@
 package edu.uit.se122.server.booking;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductOrderContract {
-    record DetailRequest(
+    record DetailReq(
             Integer productDetailId,
             Integer quantity
     ) {}
 
-    record InvoiceRequest(
+    record InvoiceReq(
             Integer courtOrderId,
-            Double givenAmount,
-            List<DetailRequest> detailRequests
+            BigDecimal givenAmount,
+            List<DetailReq> detailReqs
+    ) {}
+
+    record CalculateInvoiceRes(
+            BigDecimal totalAmount,
+            BigDecimal changeAmount
+    ) {}
+
+    record CreateOrderByCustomer(
+            Integer courtOrderId,
+            List<DetailReq> detailReqs
     ) {}
 }

@@ -3,6 +3,7 @@ package edu.uit.se122.server.inventory;
 import edu.uit.se122.server.common.enums.ProductStatus;
 import edu.uit.se122.server.common.enums.SaleType;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface ProductContract {
@@ -19,7 +20,7 @@ public interface ProductContract {
             Integer productDetailId,
             String barcode,
             String unit,
-            Double unitPrice,
+            BigDecimal unitPrice,
             SaleType saleType,
             Integer quantity,
             Integer minQuantity,
@@ -43,7 +44,7 @@ public interface ProductContract {
     record DetailReq(
             String barcode,
             String unit,
-            Double unitPrice,
+            BigDecimal unitPrice,
             SaleType saleType
     ) {}
 
@@ -56,7 +57,7 @@ public interface ProductContract {
             Integer productDetailId,
             String barcode,
             String unit,
-            Double unitPrice,
+            BigDecimal unitPrice,
             SaleType saleType,
             ProductStatus status
     ) {}
@@ -65,6 +66,6 @@ public interface ProductContract {
             Integer productDetailId,
             String barcode,
             String name,
-            Double unitPrice
+            BigDecimal unitPrice
     ) {}
 }

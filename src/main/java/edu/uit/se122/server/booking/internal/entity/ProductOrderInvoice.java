@@ -8,6 +8,7 @@ import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,15 +22,15 @@ public class ProductOrderInvoice {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productInvoiceId;
 
-    private Double totalBeforeDiscount;
+    private BigDecimal totalBeforeDiscount;
 
-    private Double totalDiscount;
+    private BigDecimal totalDiscount;
 
-    private Double totalAmount;
+    private BigDecimal totalAmount;
 
-    private Double givenAmount;
+    private BigDecimal givenAmount;
 
-    private Double changeAmount;
+    private BigDecimal changeAmount;
 
     @CreatedDate
     @Column(updatable = false)
