@@ -5,56 +5,61 @@ import edu.uit.se122.server.common.enums.OrderStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
 public interface CourtOrderContract {
     record CreateByAdminReq(
             LocalDate orderDate,
-            List<DetailRequest> detailRequests
+
+            @JsonFormat(pattern = "HH:mm:ss")
+            @Schema(type = "string", example = "08:00:00")
+            LocalTime startHour,
+
+            @JsonFormat(pattern = "HH:mm:ss")
+            @Schema(type = "string", example = "10:00:00")
+            LocalTime endHour,
+
+            List<Integer> courtIds
     ) {}
 
     record CreateByCustomerReq(
             LocalDate orderDate,
-            List<DetailRequest> detailRequests,
+
+            @JsonFormat(pattern = "HH:mm:ss")
+            @Schema(type = "string", example = "08:00:00")
+            LocalTime startHour,
+
+            @JsonFormat(pattern = "HH:mm:ss")
+            @Schema(type = "string", example = "10:00:00")
+            LocalTime endHour,
+
+            List<Integer> courtIds,
             String guestName,
             String guestEmail,
             String guestPhoneNumber
     ) {}
 
-    record Response(
+    record Res(
             Integer courtOrderId,
+            LocalDate orderDate,
+            LocalTime startHour,
+            LocalTime endHour,
             OrderStatus status,
             Integer adminId,
-            Integer userId,
+            Integer customerId,
             Boolean guest,
             String guestName,
             String guestEmail,
             String guestPhoneNumber,
-            List<DetailResponse> detailResponses
-    ) {}
-
-    record DetailRequest(
-            Integer courtId,
-
-            @JsonFormat(pattern = "HH:mm:ss")
-            @Schema(type = "string", example = "08:00:00")
-            LocalTime fromTime,
-
-            @JsonFormat(pattern = "HH:mm:ss")
-            @Schema(type = "string", example = "10:00:00")
-            LocalTime toTime
-    ) {}
-
-    record DetailResponse(
-            Integer courtOrderDetailId,
-            Integer courtId,
-            LocalTime fromTime,
-            LocalTime toTime
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            List<Integer> courtIds
     ) {}
 
     record InvoiceRequest(
             Integer courtOrderId,
-            List<DetailResponse> detailResponses
+            List<Integer> courtIds
     ) {}
 }

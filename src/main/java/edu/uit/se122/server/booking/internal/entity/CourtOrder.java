@@ -12,6 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Entity
@@ -27,6 +28,10 @@ public class CourtOrder {
 
     private LocalDate orderDate;
 
+    private LocalTime startHour;
+
+    private LocalTime endHour;
+
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
@@ -39,7 +44,7 @@ public class CourtOrder {
 
     private Integer adminId;
 
-    private Integer userId;
+    private Integer memberId;
 
     private Boolean guest;
 

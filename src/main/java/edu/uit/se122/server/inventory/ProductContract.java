@@ -10,7 +10,7 @@ public interface ProductContract {
     record Res(
             Integer productId,
             String productName,
-            String capacity,
+            ProductStatus status,
             Integer categoryId,
             String categoryName,
             List<DetailRes> details
@@ -19,33 +19,23 @@ public interface ProductContract {
     record DetailRes(
             Integer productDetailId,
             String barcode,
+            Integer capacity,
             String unit,
             BigDecimal unitPrice,
             SaleType saleType,
             Integer quantity,
-            Integer minQuantity,
-            ProductStatus status
+            Integer minQuantity
     ) {}
 
-    record Req(
+    record CreateReq(
             String productName,
-            String capacity,
             Integer categoryId,
-            List<DetailReq> details
+            DetailReq detail
     ) {}
 
     record UpdateReq(
             String productName,
-            String capacity,
-            Integer categoryId,
-            List<DetailUpdateReq> details
-    ) {}
-
-    record DetailReq(
-            String barcode,
-            String unit,
-            BigDecimal unitPrice,
-            SaleType saleType
+            List<DetailReq> details
     ) {}
 
     record UpdateQuantityReq(
@@ -53,19 +43,21 @@ public interface ProductContract {
             Integer quantity
     ) {}
 
-    record DetailUpdateReq(
+    record DetailReq(
             Integer productDetailId,
             String barcode,
+            Integer capacity,
             String unit,
             BigDecimal unitPrice,
-            SaleType saleType,
-            ProductStatus status
+            SaleType saleType
     ) {}
 
     record CreatedEvent(
-            Integer productDetailId,
+            Integer productId,
             String barcode,
+            Integer capacity,
             String name,
+            String unit,
             BigDecimal unitPrice
     ) {}
 }

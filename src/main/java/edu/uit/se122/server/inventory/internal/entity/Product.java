@@ -17,14 +17,14 @@ import java.util.List;
 @EqualsAndHashCode(exclude = "category")
 public class Product {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productId;
 
     private String name;
 
-    private String capacity;
-
     private String attachment;
+
+    @Enumerated(EnumType.STRING)
+    private ProductStatus status;
 
     // Navigation Property: Trỏ ngược về Category
     @ManyToOne(fetch = FetchType.LAZY)

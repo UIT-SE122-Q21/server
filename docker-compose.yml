@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:latest
-    container_name: BadmintonCourt
+    container_name: SmashIt
     environment:
       POSTGRES_USER: ${POSTGRES_USERNAME:username_of_postgres_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:password_of_postgres_user}

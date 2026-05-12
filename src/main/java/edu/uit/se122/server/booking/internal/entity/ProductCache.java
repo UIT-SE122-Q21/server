@@ -12,8 +12,10 @@ import java.math.BigDecimal;
 @Data
 public class ProductCache {
     @Id
-    private Integer productDetailId;
+    private Integer productId;
     private String barcode;
+    private Integer capacity;
     private String name;
+    private String unit;
     private BigDecimal unitPrice;
 }

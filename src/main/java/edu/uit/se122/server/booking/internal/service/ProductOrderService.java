@@ -91,7 +91,7 @@ public class ProductOrderService {
         if (entity.getGuest()) {
             customerName = entity.getGuestName();
         } else {
-            MemberCache memberCache = memberCacheRepository.findById(entity.getUserId())
+            MemberCache memberCache = memberCacheRepository.findById(entity.getMemberId())
                     .orElseThrow(() -> new RuntimeException("Member not found"));
             customerName = memberCache.getName();
         }
@@ -100,7 +100,7 @@ public class ProductOrderService {
                 entity.getOrderDate(),
                 customerName,
                 entity.getProductOrderDetails().stream().map(d -> new ProductOrderContract.OrderHistoryDetailRes(
-                        productCacheRepository.findById(d.getProductId()).orElseThrow(() -> new RuntimeException("Product not found")).getProductDetailId(),
+                        productCacheRepository.findById(d.getProductId()).orElseThrow(() -> new RuntimeException("Product not found")).getProductId(),
                         productCacheRepository.findById(d.getProductId()).orElseThrow(() -> new RuntimeException("Product not found")).getName(),
                         d.getQuantity()
                 )).toList()

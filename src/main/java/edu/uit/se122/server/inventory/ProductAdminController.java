@@ -9,13 +9,13 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/product")
+@RequestMapping("/api/admin/product")
 @RequiredArgsConstructor
-public class ProductController {
+public class ProductAdminController {
     private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody ProductContract.Req dto) {
+    public ResponseEntity<Object> create(@RequestBody ProductContract.CreateReq dto) {
         productService.create(dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }

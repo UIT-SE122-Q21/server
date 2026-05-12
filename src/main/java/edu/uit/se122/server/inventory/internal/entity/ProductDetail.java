@@ -18,9 +18,12 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(exclude = "product")
 public class ProductDetail {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productDetailId;
 
     private String barcode;
+
+    private Integer capacity;
 
     private String unit;
 
@@ -32,9 +35,6 @@ public class ProductDetail {
     private Integer quantity;
 
     private Integer minQuantity;
-
-    @Enumerated(EnumType.STRING)
-    private ProductStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productId")

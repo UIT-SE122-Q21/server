@@ -17,9 +17,11 @@ public class ProductCacheEventListener {
     @ApplicationModuleListener
     void onProductUpdated(ProductContract.CreatedEvent dto) {
         ProductCache productCache = new ProductCache();
-        productCache.setProductDetailId(dto.productDetailId());
+        productCache.setProductId(dto.productId());
         productCache.setBarcode(dto.barcode());
+        productCache.setCapacity(dto.capacity());
         productCache.setName(dto.name());
+        productCache.setUnit(dto.unit());
         productCache.setUnitPrice(dto.unitPrice());
         cacheRepository.save(productCache);
     }

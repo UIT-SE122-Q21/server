@@ -16,12 +16,12 @@ public class CourtOrderCustomerController {
     private final CourtOrderService courtOrderService;
 
     @GetMapping
-    public ResponseEntity<List<CourtOrderContract.Response>> getAll() {
+    public ResponseEntity<List<CourtOrderContract.Res>> getAll() {
         return ResponseEntity.ok(courtOrderService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CourtOrderContract.Response> getById(@PathVariable Integer id) {
+    public ResponseEntity<CourtOrderContract.Res> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(courtOrderService.getById(id));
     }
 

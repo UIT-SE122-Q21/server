@@ -25,11 +25,11 @@ public class CourtOrderService {
     private final CourtOrderInvoiceRepository invoiceRepository;
     private final CourtCacheRepository courtCacheRepository;
 
-    public List<CourtOrderContract.Response> getAll() {
+    public List<CourtOrderContract.Res> getAll() {
         return courtOrderRepository.findAll().stream().map(this::mapToDTO).toList();
     }
 
-    public CourtOrderContract.Response getById(Integer id) {
+    public CourtOrderContract.Res getById(Integer id) {
         return courtOrderRepository.findById(id).map(this::mapToDTO)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
     }
@@ -37,19 +37,23 @@ public class CourtOrderService {
     public void createByAdmin(Integer adminId, CourtOrderContract.CreateByAdminReq dto) {
         CourtOrder order = new CourtOrder();
         order.setOrderDate(dto.orderDate());
+        order.setStartHour(dto.startHour());
+        order.setEndHour(dto.endHour());
         order.setAdminId(adminId);
-        List<CourtOrderDetail> details = updateDetails(order, dto.detailRequests());
-        order.setCourtOrderDetails(details);
+        List<CourtOrderDetail> detail = mapToDetails(order, dto.courtIds());
+        order.setCourtOrderDetails(detail);
         CourtOrder saved = courtOrderRepository.save(order);
 
         calculateInvoice(saved);
     }
 
-    public void createByUser(Integer userId, CourtOrderContract.CreateByCustomerReq dto) {
+    public void createByUser(Integer memberId, CourtOrderContract.CreateByCustomerReq dto) {
         CourtOrder order = new CourtOrder();
         order.setOrderDate(dto.orderDate());
-        if (userId != null) {
-            order.setUserId(userId);
+        order.setStartHour(dto.startHour());
+        order.setEndHour(dto.endHour());
+        if (memberId != null) {
+            order.setMemberId(memberId);
             order.setGuest(false);
         } else {
             order.setGuest(true);
@@ -57,7 +61,7 @@ public class CourtOrderService {
             order.setGuestEmail(dto.guestEmail());
             order.setGuestPhoneNumber(dto.guestPhoneNumber());
         }
-        List<CourtOrderDetail> details = updateDetails(order, dto.detailRequests());
+        List<CourtOrderDetail> details = mapToDetails(order, dto.courtIds());
         order.setCourtOrderDetails(details);
         courtOrderRepository.save(order);
     }
@@ -87,33 +91,31 @@ public class CourtOrderService {
         invoiceRepository.save(invoice);
     }
 
-    private List<CourtOrderDetail> updateDetails(CourtOrder entity, List<CourtOrderContract.DetailRequest> requests) {
-        return requests.stream().map(detailRequest -> {
+    private List<CourtOrderDetail> mapToDetails(CourtOrder entity, List<Integer> courtIds) {
+        return courtIds.stream().map(courtId -> {
             CourtOrderDetail detail = new CourtOrderDetail();
-            detail.setCourtId(detailRequest.courtId());
-            detail.setFromTime(detailRequest.fromTime());
-            detail.setToTime(detailRequest.toTime());
+            detail.setCourtId(courtId);
             detail.setCourtOrder(entity);
             return detail;
         }).collect(Collectors.toCollection(ArrayList::new));
     }
 
-    private CourtOrderContract.Response mapToDTO(CourtOrder entity) {
-        return new CourtOrderContract.Response(
+    private CourtOrderContract.Res mapToDTO(CourtOrder entity) {
+        return new CourtOrderContract.Res(
                 entity.getCourtOrderId(),
+                entity.getOrderDate(),
+                entity.getStartHour(),
+                entity.getEndHour(),
                 entity.getStatus(),
                 entity.getAdminId(),
-                entity.getUserId(),
+                entity.getMemberId(),
                 entity.getGuest(),
                 entity.getGuestName(),
                 entity.getGuestEmail(),
                 entity.getGuestPhoneNumber(),
-                entity.getCourtOrderDetails().stream().map(d -> new CourtOrderContract.DetailResponse(
-                        d.getCourtOrderDetailId(),
-                        d.getCourtId(),
-                        d.getFromTime(),
-                        d.getToTime()
-                )).toList()
+                entity.getCreatedAt(),
+                entity.getUpdatedAt(),
+                entity.getCourtOrderDetails().stream().map(CourtOrderDetail::getCourtId).toList()
         );
     }
 }
