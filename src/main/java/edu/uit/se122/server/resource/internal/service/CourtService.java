@@ -1,5 +1,6 @@
 package edu.uit.se122.server.resource.internal.service;
 
+import edu.uit.se122.server.common.enums.CourtStatus;
 import edu.uit.se122.server.resource.CourtContract;
 import edu.uit.se122.server.resource.internal.entity.Court;
 import edu.uit.se122.server.resource.internal.repository.CourtRepository;
@@ -52,7 +53,7 @@ public class CourtService {
         entity.setName(dto.name());
         entity.setNumOfIndex(dto.numOfIndex());
         entity.setUnitPrice(dto.unitPrice());
-        entity.setStatus(dto.status());
+        entity.setStatus(CourtStatus.Available);
     }
 
     private CourtContract.Response mapToDTO(Court entity) {

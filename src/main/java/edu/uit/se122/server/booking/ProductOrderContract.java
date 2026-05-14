@@ -6,14 +6,15 @@ import java.util.List;
 
 public interface ProductOrderContract {
     record DetailReq(
-            Integer productDetailId,
+            Integer productId,
+            Integer productCategoryId,
             Integer quantity
     ) {}
 
     record InvoiceReq(
             Integer courtOrderId,
             BigDecimal givenAmount,
-            List<DetailReq> detailReqs
+            List<DetailReq> details
     ) {}
 
     record CalculateInvoiceRes(
@@ -23,7 +24,7 @@ public interface ProductOrderContract {
 
     record CreateOrderByCustomer(
             Integer courtOrderId,
-            List<DetailReq> detailReqs
+            List<DetailReq> details
     ) {}
 
     record OrderHistoryRes(

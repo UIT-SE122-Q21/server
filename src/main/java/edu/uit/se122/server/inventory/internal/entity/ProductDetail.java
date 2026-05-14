@@ -32,10 +32,6 @@ public class ProductDetail {
     @Enumerated(EnumType.STRING)
     private SaleType saleType;
 
-    private Integer quantity;
-
-    private Integer minQuantity;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "productId")
     @JsonBackReference(value = "details_product")

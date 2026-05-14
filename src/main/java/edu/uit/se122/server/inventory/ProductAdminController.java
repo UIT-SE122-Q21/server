@@ -37,8 +37,8 @@ public class ProductAdminController {
     }
 
     @PutMapping("/{id}/quantity")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProductContract.UpdateQuantityReq dto) {
-        productService.updateQuantity(dto);
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody ProductContract.UpdateQuantityReq quantity) {
+        productService.updateQuantity(id, quantity);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 

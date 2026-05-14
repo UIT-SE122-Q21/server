@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,6 +27,10 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductStatus status;
 
+    private Integer quantity;
+
+    private Integer minQuantity;
+
     // Navigation Property: Trỏ ngược về Category
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ProductCategoryId")
@@ -34,5 +39,5 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     @JsonBackReference(value = "details_product")
-    private List<ProductDetail> details;
+    private List<ProductDetail> details = new ArrayList<>();
 }

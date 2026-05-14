@@ -6,7 +6,6 @@ import edu.uit.se122.server.inventory.internal.entity.Product;
 import edu.uit.se122.server.inventory.internal.entity.ProductCategory;
 import edu.uit.se122.server.inventory.internal.entity.ProductDetail;
 import edu.uit.se122.server.inventory.internal.repository.ProductCategoryRepository;
-import edu.uit.se122.server.inventory.internal.repository.ProductDetailRepository;
 import edu.uit.se122.server.inventory.internal.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,7 +22,6 @@ import java.util.stream.Collectors;
 @Transactional
 public class ProductService {
     private final ProductRepository productRepository;
-    private final ProductDetailRepository detailRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -42,13 +39,19 @@ public class ProductService {
                 .orElseThrow(() -> new RuntimeException("Category not found"));
         Integer maxId = productRepository.findMaxProductIdByCategoryId(category.getProductCategoryId());
         int newDetailId;
-        newDetailId = Objects.requireNonNullElseGet(maxId, () -> category.getProductCategoryId() * 1000);
+        if (maxId == null) {
+            newDetailId = category.getProductCategoryId() * 1000 + 1;
+        } else {
+            newDetailId = maxId + 1;
+        }
 
         Product product = new Product();
         product.setProductId(newDetailId);
         product.setName(dto.productName());
         product.setCategory(category);
         product.setStatus(ProductStatus.Available);
+        product.setQuantity(0);
+        product.setMinQuantity(0);
         ProductDetail detail = mapToDetail(product, dto.detail());
         product.getDetails().add(detail);
         Product saved = productRepository.save(product);
@@ -73,13 +76,13 @@ public class ProductService {
         productRepository.save(product);
     }
 
-    public void updateQuantity(ProductContract.UpdateQuantityReq dto) {
-        ProductDetail detail = detailRepository.findById(dto.productDetailId())
-                .orElseThrow(() -> new RuntimeException("Product detail not found"));
+    public void updateQuantity(Integer id, ProductContract.UpdateQuantityReq dto) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
 
-        Integer newQuantity = detail.getQuantity() + dto.quantity();
-        detail.setQuantity(newQuantity);
-        detailRepository.save(detail);
+        Integer newQuantity = product.getQuantity() + dto.quantity();
+        product.setQuantity(newQuantity);
+        productRepository.save(product);
     }
 
     public void delete(Integer id) { productRepository.deleteById(id); }
@@ -114,8 +117,6 @@ public class ProductService {
         detail.setUnit(dto.unit());
         detail.setUnitPrice(dto.unitPrice());
         detail.setSaleType(dto.saleType());
-        detail.setQuantity(0);
-        detail.setMinQuantity(0);
         detail.setProduct(entity);
         return detail;
     }
@@ -125,6 +126,8 @@ public class ProductService {
                 entity.getProductId(),
                 entity.getName(),
                 entity.getStatus(),
+                entity.getQuantity(),
+                entity.getMinQuantity(),
                 entity.getCategory().getProductCategoryId(),
                 entity.getCategory().getName(),
                 entity.getDetails().stream().map(d -> new ProductContract.DetailRes(
@@ -133,9 +136,7 @@ public class ProductService {
                         d.getCapacity(),
                         d.getUnit(),
                         d.getUnitPrice(),
-                        d.getSaleType(),
-                        d.getQuantity(),
-                        d.getMinQuantity()
+                        d.getSaleType()
                 )).toList()
         );
     }

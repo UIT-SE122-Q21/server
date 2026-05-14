@@ -19,7 +19,7 @@ public class ProductOrderAdminController {
         return ResponseEntity.ok(productOrderService.getOrderHistory());
     }
 
-    @GetMapping("/calculate")
+    @PostMapping("/calculate")
     public ResponseEntity<ProductOrderContract.CalculateInvoiceRes> calculateInvoice(@RequestBody ProductOrderContract.InvoiceReq dto) {
         return ResponseEntity.ok(productOrderService.calculateInvoice(dto));
     }

@@ -11,6 +11,8 @@ public interface ProductContract {
             Integer productId,
             String productName,
             ProductStatus status,
+            Integer quantity,
+            Integer minQuantity,
             Integer categoryId,
             String categoryName,
             List<DetailRes> details
@@ -22,9 +24,7 @@ public interface ProductContract {
             Integer capacity,
             String unit,
             BigDecimal unitPrice,
-            SaleType saleType,
-            Integer quantity,
-            Integer minQuantity
+            SaleType saleType
     ) {}
 
     record CreateReq(
@@ -39,7 +39,6 @@ public interface ProductContract {
     ) {}
 
     record UpdateQuantityReq(
-            Integer productDetailId,
             Integer quantity
     ) {}
 

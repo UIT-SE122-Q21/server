@@ -18,8 +18,7 @@ public interface CourtContract {
     record Request(
             String name,
             Integer numOfIndex,
-            Double unitPrice,
-            CourtStatus status
+            Double unitPrice
     ) {}
 
     record CreatedEvent(
