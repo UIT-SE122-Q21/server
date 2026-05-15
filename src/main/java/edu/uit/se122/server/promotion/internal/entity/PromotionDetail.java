@@ -22,4 +22,5 @@ public class PromotionDetail {
     private Promotion promotion;
 
     private Integer productId;
+    private Integer minQuantity;
 }

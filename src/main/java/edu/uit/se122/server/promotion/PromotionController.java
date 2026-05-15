@@ -16,30 +16,24 @@ public class PromotionController {
     private final PromotionService promotionService;
 
     @PostMapping
-    public ResponseEntity<Object> create(@RequestBody PromotionContract.Request dto) {
+    public ResponseEntity<Object> create(@RequestBody PromotionContract.CreateReq dto) {
         promotionService.create(dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
     @GetMapping
-    public ResponseEntity<List<PromotionContract.Response>> getAll() {
+    public ResponseEntity<List<PromotionContract.Res>> getAll() {
         return ResponseEntity.ok(promotionService.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PromotionContract.Response> getById(@PathVariable Integer id) {
+    public ResponseEntity<PromotionContract.Res> getById(@PathVariable Integer id) {
         return ResponseEntity.ok(promotionService.getById(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody PromotionContract.Request dto) {
-        promotionService.update(id, dto);
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> hide(@PathVariable Integer id, @RequestBody PromotionContract.HideReq dto) {
+        promotionService.hide(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@PathVariable Integer id) {
-        promotionService.delete(id);
-        return ResponseEntity.ok(Map.of("message", "Xóa thành công"));
     }
 }
