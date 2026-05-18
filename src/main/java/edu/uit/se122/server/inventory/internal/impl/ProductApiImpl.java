@@ -1,6 +1,6 @@
 package edu.uit.se122.server.inventory.internal.impl;
 
-import edu.uit.se122.server.booking.ProductOrderContract;
+import edu.uit.se122.server.booking.OrderContract;
 import edu.uit.se122.server.inventory.ProductApi;
 import edu.uit.se122.server.inventory.internal.entity.Product;
 import edu.uit.se122.server.inventory.internal.repository.ProductRepository;
@@ -17,11 +17,12 @@ public class ProductApiImpl implements ProductApi {
     private final ProductRepository productRepository;
 
     @Override
-    public void decreaseQuantity(List<ProductOrderContract.DetailReq> list) {
-        for (ProductOrderContract.DetailReq detailReq : list) {
-            Product product = productRepository.findById(detailReq.productId())
+    public void decreaseQuantity(List<OrderContract.ProductOrderDetailReq> list) {
+        for (OrderContract.ProductOrderDetailReq detail : list) {
+            if (detail.productCategoryId() == 1) continue;
+            Product product = productRepository.findById(detail.productId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
-            product.setQuantity(product.getQuantity() - detailReq.quantity());
+            product.setQuantity(product.getQuantity() - detail.quantity());
         }
     }
 

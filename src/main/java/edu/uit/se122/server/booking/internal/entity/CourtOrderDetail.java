@@ -18,10 +18,6 @@ public class CourtOrderDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer courtOrderDetailId;
 
-    private LocalTime fromTime;
-
-    private LocalTime toTime;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "CourtOrderId")
     @JsonBackReference(value = "courtOrderDetails")

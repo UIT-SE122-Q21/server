@@ -57,7 +57,8 @@ public class ProductService {
         Product saved = productRepository.save(product);
 
         ProductContract.CreatedEvent event = new ProductContract.CreatedEvent(
-                saved.getProductId(), 
+                saved.getProductId(),
+                saved.getCategory().getProductCategoryId(),
                 detail.getBarcode(),
                 detail.getCapacity(),
                 saved.getName(),

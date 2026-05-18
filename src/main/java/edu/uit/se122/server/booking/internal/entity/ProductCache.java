@@ -13,6 +13,7 @@ import java.math.BigDecimal;
 public class ProductCache {
     @Id
     private Integer productId;
+    private Integer productCategoryId;
     private String barcode;
     private Integer capacity;
     private String name;

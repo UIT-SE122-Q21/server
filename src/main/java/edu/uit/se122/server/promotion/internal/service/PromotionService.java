@@ -3,7 +3,6 @@ package edu.uit.se122.server.promotion.internal.service;
 import edu.uit.se122.server.promotion.PromotionContract;
 import edu.uit.se122.server.promotion.internal.entity.Promotion;
 import edu.uit.se122.server.promotion.internal.entity.PromotionDetail;
-import edu.uit.se122.server.promotion.internal.repository.PromotionDetailRepository;
 import edu.uit.se122.server.promotion.internal.repository.PromotionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -11,14 +10,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class PromotionService {
     private final PromotionRepository promotionRepository;
-//    private final PromotionDetailRepository detailRepository;
 
     // CREATE
     public void create(PromotionContract.CreateReq dto) {

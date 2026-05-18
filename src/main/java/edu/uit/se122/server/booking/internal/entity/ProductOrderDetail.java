@@ -22,8 +22,6 @@ public class ProductOrderDetail {
 
     private BigDecimal unitDiscount;
 
-    private Boolean draft;
-
     @ManyToOne
     @JoinColumn(name = "CourtOrderId")
     @JsonBackReference(value = "productOrderDetails")

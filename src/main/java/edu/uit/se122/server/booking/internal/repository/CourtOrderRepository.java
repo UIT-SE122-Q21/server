@@ -34,7 +34,7 @@ public interface CourtOrderRepository extends JpaRepository<CourtOrder, Integer>
         SELECT COALESCE(SUM(pod.quantity), 0)
         FROM CourtOrder co
         JOIN co.productOrderDetails pod
-        WHERE pod.draft = true
+        WHERE co.status = "Ordered"
         AND pod.productId = :productId
         AND co.orderDate >= :orderDate
     """)

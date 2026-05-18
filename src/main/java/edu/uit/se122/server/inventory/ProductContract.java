@@ -53,6 +53,7 @@ public interface ProductContract {
 
     record CreatedEvent(
             Integer productId,
+            Integer productCategoryId,
             String barcode,
             Integer capacity,
             String name,

@@ -3,9 +3,7 @@ package edu.uit.se122.server.booking.internal.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.uit.se122.server.common.enums.OrderStatus;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -17,13 +15,15 @@ import java.util.List;
 
 @Entity
 @Table(name = "CourtOrder")
-@Data
+@Getter
+@Setter
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"courtOrderDetails", "productOrderDetails", "courtOrderInvoices", "productOrderInvoices"})
-@EqualsAndHashCode(exclude = {"courtOrderDetails", "productOrderDetails", "courtOrderInvoices", "productOrderInvoices"})
+@ToString(exclude = {"courtOrderDetails", "productOrderDetails", "orderInvoices"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CourtOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     private Integer courtOrderId;
 
     private LocalDate orderDate;
@@ -55,19 +55,15 @@ public class CourtOrder {
     private String guestPhoneNumber;
 
     // Navigation: Chi tiết các sân được đặt trong đơn này
-    @OneToMany(mappedBy = "courtOrder", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "courtOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "courtOrderDetails")
     private List<CourtOrderDetail> courtOrderDetails;
 
-    @OneToMany(mappedBy = "courtOrder", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "courtOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "productOrderDetails")
     private List<ProductOrderDetail> productOrderDetails;
 
     @OneToOne(mappedBy = "courtOrder", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "courtOrderInvoices")
-    private CourtOrderInvoice courtOrderInvoices;
-
-    @OneToOne(mappedBy = "courtOrder", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "productOrderInvoices")
-    private ProductOrderInvoice productOrderInvoices;
+    @JsonManagedReference(value = "orderInvoices")
+    private OrderInvoice orderInvoices;
 }

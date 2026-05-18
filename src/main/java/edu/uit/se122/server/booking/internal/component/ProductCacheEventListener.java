@@ -18,6 +18,7 @@ public class ProductCacheEventListener {
     void onProductUpdated(ProductContract.CreatedEvent dto) {
         ProductCache productCache = new ProductCache();
         productCache.setProductId(dto.productId());
+        productCache.setProductCategoryId(dto.productCategoryId());
         productCache.setBarcode(dto.barcode());
         productCache.setCapacity(dto.capacity());
         productCache.setName(dto.name());
