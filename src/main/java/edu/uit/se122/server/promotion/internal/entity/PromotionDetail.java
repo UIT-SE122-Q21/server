@@ -2,15 +2,12 @@ package edu.uit.se122.server.promotion.internal.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 @Entity
 @Table(name = "PromotionDetail")
-@Data
-@ToString(exclude = "promotion")
-@EqualsAndHashCode(exclude = "promotion")
+@Getter
+@Setter
 public class PromotionDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

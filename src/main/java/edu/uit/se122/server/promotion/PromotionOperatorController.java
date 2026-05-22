@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/promotions")
+@RequestMapping("/api/operator/promotion")
 @RequiredArgsConstructor
-public class PromotionController {
+public class PromotionOperatorController {
 
     private final PromotionService promotionService;
 
@@ -22,13 +22,13 @@ public class PromotionController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PromotionContract.Res>> getAll() {
-        return ResponseEntity.ok(promotionService.getAll());
+    public ResponseEntity<List<PromotionContract.ResByOperator>> getAll() {
+        return ResponseEntity.ok(promotionService.getAllByOperator());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PromotionContract.Res> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(promotionService.getById(id));
+    public ResponseEntity<PromotionContract.ResByOperator> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(promotionService.getByIdByOperator(id));
     }
 
     @PatchMapping("/{id}")

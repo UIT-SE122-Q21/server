@@ -1,25 +1,33 @@
 package edu.uit.se122.server.promotion;
 
-import edu.uit.se122.server.common.enums.DiscountType;
-import edu.uit.se122.server.common.enums.PromotionCondition;
-import edu.uit.se122.server.common.enums.PromotionType;
+import edu.uit.se122.server.promotion.internal.condition.ConditionComponent;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public interface PromotionContract {
-    record Res(
+    record ResByOperator(
             Integer promotionId,
             String title,
             String description,
-            DiscountType discountType,
-            PromotionType promotionType,
-            PromotionCondition condition,
-            BigDecimal discountValue,
-            BigDecimal minOrderValue,
+            ConditionComponent condition,
             LocalDate startDate,
             LocalDate endDate,
+            Boolean hidden,
+            List<DetailRes> details
+    ) {}
+
+    record ResByAdmin(
+            Integer promotionId,
+            String title,
+            String description,
+            LocalDate startDate,
+            LocalDate endDate,
+            Boolean hidden,
             List<DetailRes> details
     ) {}
 
@@ -32,11 +40,7 @@ public interface PromotionContract {
     record CreateReq(
             String title,
             String description,
-            DiscountType discountType,
-            PromotionType promotionType,
-            PromotionCondition condition,
-            BigDecimal discountValue,
-            BigDecimal minOrderValue,
+            ConditionComponent condition,
             LocalDate startDate,
             LocalDate endDate,
             List<CreateDetailReq> details
@@ -49,5 +53,17 @@ public interface PromotionContract {
 
     record HideReq(
             Boolean hidden
+    ) {}
+
+    @NoArgsConstructor
+    @Data
+    class OrderContext {
+        public BigDecimal totalBeforeDiscount;
+        public List<String> promotionDescriptions = new ArrayList<>();
+    }
+
+    record ApplyRes(
+            BigDecimal totalDiscount,
+            List<String> promotionDescriptions
     ) {}
 }

@@ -90,11 +90,19 @@ public interface OrderContract {
     ) {}
 
     record CalculateTotalRes(
+            BigDecimal totalBeforeDiscount,
+            BigDecimal totalDiscount,
             BigDecimal totalAmount,
-            BigDecimal changeAmount
+            BigDecimal changeAmount,
+            String promotionDescription
     ) {}
 
     record CalculateDepositRes(
             BigDecimal depositAmount
+    ) {}
+
+    record ApplyPromotionEvent(
+            Integer courtOrderId,
+            BigDecimal totalBeforeDiscount
     ) {}
 }

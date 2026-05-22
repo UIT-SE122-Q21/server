@@ -6,33 +6,43 @@ import edu.uit.se122.server.promotion.internal.entity.PromotionDetail;
 import edu.uit.se122.server.promotion.internal.repository.PromotionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class PromotionService {
     private final PromotionRepository promotionRepository;
 
     // CREATE
     public void create(PromotionContract.CreateReq dto) {
         Promotion promotion = mapToPromotion(dto);
-        List<PromotionDetail> detail = mapToDetail(promotion, dto.details());
-        promotion.setDetails(detail);
+        List<PromotionDetail> detail = mapToDetail(dto.details());
+        for (PromotionDetail d : detail) {
+            promotion.addDetail(d);
+        }
         promotionRepository.save(promotion);
     }
 
-    // READ ALL
-    public List<PromotionContract.Res> getAll() {
-        return promotionRepository.findAll().stream().map(this::mapToDTO).toList();
+    public List<PromotionContract.ResByAdmin> getAllByAdmin() {
+        return promotionRepository.findAll().stream().map(this::mapToResByAdmin).toList();
     }
 
-    // READ ONE
-    public PromotionContract.Res getById(Integer id) {
-        return promotionRepository.findById(id).map(this::mapToDTO)
+    public PromotionContract.ResByAdmin getByIdByAdmin(Integer id) {
+        return promotionRepository.findById(id).map(this::mapToResByAdmin)
+                .orElseThrow(() -> new RuntimeException("Promotion not found"));
+    }
+
+    public List<PromotionContract.ResByOperator> getAllByOperator() {
+        return promotionRepository.findAll().stream().map(this::mapToResByOperator).toList();
+    }
+
+    public PromotionContract.ResByOperator getByIdByOperator(Integer id) {
+        return promotionRepository.findById(id).map(this::mapToResByOperator)
                 .orElseThrow(() -> new RuntimeException("Promotion not found"));
     }
 
@@ -41,49 +51,60 @@ public class PromotionService {
     }
 
     private Promotion mapToPromotion(PromotionContract.CreateReq dto) {
-        Promotion promotion = new Promotion();
-        promotion.setTitle(dto.title());
-        promotion.setDescription(dto.description());
-        promotion.setDiscountType(dto.discountType());
-        promotion.setPromotionType(dto.promotionType());
-        promotion.setCondition(dto.condition());
-        promotion.setDiscountValue(dto.discountValue());
-        promotion.setMinOrderValue(dto.minOrderValue());
-        promotion.setStartDate(dto.startDate());
-        promotion.setEndDate(dto.endDate());
-        promotion.setHidden(false);
-        return promotion;
+        return Promotion.builder()
+                .title(dto.title())
+                .description(dto.description())
+                .condition(dto.condition())
+                .startDate(dto.startDate())
+                .endDate(dto.endDate())
+                .hidden(false)
+                .build();
     }
 
-    private List<PromotionDetail> mapToDetail(Promotion entity, List<PromotionContract.CreateDetailReq> dtoList) {
+    private List<PromotionDetail> mapToDetail(List<PromotionContract.CreateDetailReq> dtoList) {
         List<PromotionDetail> details = new ArrayList<>();
-        for (PromotionContract.CreateDetailReq dto : dtoList) {
-            PromotionDetail detail = new PromotionDetail();
-            detail.setPromotion(entity);
-            detail.setProductId(dto.productId());
-            detail.setMinQuantity(dto.minQuantity());
-            details.add(detail);
+        if (dtoList != null) {
+            for (PromotionContract.CreateDetailReq dto : dtoList) {
+                PromotionDetail detail = new PromotionDetail();
+                detail.setProductId(dto.productId());
+                detail.setMinQuantity(dto.minQuantity());
+                details.add(detail);
+            }
         }
         return details;
     }
 
-    private PromotionContract.Res mapToDTO(Promotion entity) {
+    private PromotionContract.ResByAdmin mapToResByAdmin(Promotion entity) {
         List<PromotionContract.DetailRes> details = entity.getDetails().stream().map(detail -> new PromotionContract.DetailRes(
                 detail.getPromotionDetailId(),
                 detail.getProductId(),
                 detail.getMinQuantity()
         )).toList();
-        return new PromotionContract.Res(
+        return new PromotionContract.ResByAdmin(
                 entity.getPromotionId(),
                 entity.getTitle(),
                 entity.getDescription(),
-                entity.getDiscountType(),
-                entity.getPromotionType(),
-                entity.getCondition(),
-                entity.getDiscountValue(),
-                entity.getMinOrderValue(),
                 entity.getStartDate(),
                 entity.getEndDate(),
+                entity.getHidden(),
+                details
+        );
+    }
+
+    private PromotionContract.ResByOperator mapToResByOperator(Promotion entity) {
+        List<PromotionContract.DetailRes> details = entity.getDetails().stream().map(detail -> new PromotionContract.DetailRes(
+                detail.getPromotionDetailId(),
+                detail.getProductId(),
+                detail.getMinQuantity()
+        )).toList();
+        return new PromotionContract.ResByOperator(
+                entity.getPromotionId(),
+                entity.getTitle(),
+                entity.getDescription(),
+                entity.getCondition(),
+                entity.getStartDate(),
+                entity.getEndDate(),
+                entity.getHidden(),
                 details
         );
     }

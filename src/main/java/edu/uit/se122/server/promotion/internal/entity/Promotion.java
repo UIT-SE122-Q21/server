@@ -1,25 +1,22 @@
 package edu.uit.se122.server.promotion.internal.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import edu.uit.se122.server.common.enums.DiscountType;
-import edu.uit.se122.server.common.enums.PromotionCondition;
-import edu.uit.se122.server.common.enums.PromotionType;
+import edu.uit.se122.server.promotion.internal.condition.ConditionComponent;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "Promotion")
-@Data
-@ToString(exclude = "details")
-@EqualsAndHashCode(exclude = "details")
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Promotion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,22 +25,23 @@ public class Promotion {
     private String title;
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    private PromotionType promotionType;
+    @JdbcTypeCode(SqlTypes.JSON)
+    private ConditionComponent condition;
 
-    @Enumerated(EnumType.STRING)
-    private DiscountType discountType;
-
-    @Enumerated(EnumType.STRING)
-    private PromotionCondition condition;
-
-    private BigDecimal discountValue;
-    private BigDecimal minOrderValue;
     private LocalDate startDate;
     private LocalDate endDate;
+
+    @Setter
     private Boolean hidden;
 
     @OneToMany(mappedBy = "promotion", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "details")
     private List<PromotionDetail> details = new ArrayList<>();
+
+    public void addDetail(PromotionDetail detail) {
+        if (details != null) {
+            this.details.add(detail);
+            detail.setPromotion(this);
+        }
+    }
 }

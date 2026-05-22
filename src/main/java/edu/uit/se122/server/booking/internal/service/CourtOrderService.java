@@ -5,9 +5,12 @@ import edu.uit.se122.server.booking.internal.entity.*;
 import edu.uit.se122.server.booking.internal.repository.*;
 import edu.uit.se122.server.common.enums.OrderStatus;
 import edu.uit.se122.server.inventory.ProductApi;
+import edu.uit.se122.server.promotion.PromotionApi;
+import edu.uit.se122.server.promotion.PromotionContract;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -28,6 +31,8 @@ public class CourtOrderService {
     private final ProductCacheRepository productCacheRepository;
     private final MemberCacheRepository memberCacheRepository;
     private final ProductApi productApi;
+    private final PromotionApi promotionApi;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<OrderContract.Res> getAll() {
         return courtOrderRepository.findAll().stream().map(this::mapToDTO).toList();
@@ -109,13 +114,23 @@ public class CourtOrderService {
     public OrderContract.CalculateTotalRes calculateTotalValue(Integer id, OrderContract.CreateInvoiceByAdminReq dto) {
         CourtOrder courtOrder = courtOrderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Court order not found"));
+        PromotionContract.OrderContext orderContext = new PromotionContract.OrderContext();
 
         BigDecimal courtTotalAmount = calculateCourtTotalBeforeDiscount(courtOrder);
         BigDecimal productTotalAmount = calculateProductTotalBeforeDiscount(courtOrder);
-        BigDecimal totalAmount = courtTotalAmount.add(productTotalAmount);
+        BigDecimal totalBeforeDiscount = courtTotalAmount.add(productTotalAmount);
+        orderContext.setTotalBeforeDiscount(totalBeforeDiscount);
+        BigDecimal totalDiscount = promotionApi.applyPromotion(orderContext);
+        BigDecimal totalAmount = totalBeforeDiscount.subtract(totalDiscount);
         BigDecimal changeAmount = dto.givenAmount().subtract(totalAmount);
 
-        return new OrderContract.CalculateTotalRes(totalAmount, changeAmount);
+        return new OrderContract.CalculateTotalRes(
+                totalBeforeDiscount,
+                totalDiscount,
+                totalAmount,
+                changeAmount,
+                String.join(",", orderContext.getPromotionDescriptions())
+        );
     }
 
     public void createInvoiceByCustomer(Integer id) {

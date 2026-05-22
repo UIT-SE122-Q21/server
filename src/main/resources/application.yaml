@@ -21,6 +21,10 @@ spring:
         format_sql: true
         highlight_sql: true
     open-in-view: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
   mail:
     host: smtp-relay.brevo.com
     port: 587
