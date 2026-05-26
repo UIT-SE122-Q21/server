@@ -14,7 +14,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -176,6 +178,12 @@ public class CourtOrderService {
         invoice.setPaymentMethod(dto.paymentMethod());
         courtOrder.setOrderInvoice(invoice);
         invoiceRepository.save(invoice);
+    }
+
+    public Map<Integer, List<OrderContract.CourtRes>> getAllCourtSchedule(OrderContract.CourtReq dto) {
+        List<OrderContract.CourtRes> weeklySchedule = courtOrderRepository.getAllCourtSchedule(dto.orderDate());
+
+        return weeklySchedule.stream().collect(Collectors.groupingBy(OrderContract.CourtRes::getCourtId));
     }
 
     private BigDecimal calculateCourtTotalBeforeDiscount(CourtOrder courtOrder) {

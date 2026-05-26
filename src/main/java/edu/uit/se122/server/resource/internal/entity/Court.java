@@ -17,8 +17,6 @@ import java.util.List;
 @Table(name = "Court")
 @Data
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"maintains"})
-@EqualsAndHashCode(exclude = {"maintains"})
 public class Court {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,8 +39,4 @@ public class Court {
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
-
-    @OneToMany(mappedBy = "court", cascade = CascadeType.ALL)
-    @JsonBackReference(value = "maintains_court")
-    private List<Maintain> maintains;
 }

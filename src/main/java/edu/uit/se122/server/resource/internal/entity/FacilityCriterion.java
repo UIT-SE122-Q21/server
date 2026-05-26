@@ -24,6 +24,5 @@ public class FacilityCriterion {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FacilityCategoryId")
-    @JsonBackReference(value = "criteria")
     private FacilityCategory category;
 }

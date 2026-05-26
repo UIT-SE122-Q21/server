@@ -17,8 +17,6 @@ import java.util.List;
 @Table(name = "Facility")
 @Data
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"category", "maintain"})
-@EqualsAndHashCode(exclude = {"category", "maintain"})
 public class Facility {
     @Id
     private Integer facilityId;
@@ -39,10 +37,5 @@ public class Facility {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "FacilityCategoryId")
-    @JsonBackReference(value = "facilities")
     private FacilityCategory category;
-
-    @OneToMany(mappedBy = "facility", cascade = CascadeType.ALL)
-    @JsonBackReference(value = "maintains_facility")
-    private List<Maintain> maintains;
 }

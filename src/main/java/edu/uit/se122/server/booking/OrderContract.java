@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import edu.uit.se122.server.common.enums.OrderStatus;
 import edu.uit.se122.server.common.enums.PaymentMethod;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -100,5 +101,17 @@ public interface OrderContract {
     record ApplyPromotionEvent(
             Integer courtOrderId,
             BigDecimal totalBeforeDiscount
+    ) {}
+
+    interface CourtRes {
+        Integer getCourtId();
+        Integer getCourtOrderId();
+        LocalDate getOrderDate();
+        LocalTime getStartHour();
+        LocalTime getEndHour();
+    }
+
+    record CourtReq (
+            LocalDate orderDate
     ) {}
 }

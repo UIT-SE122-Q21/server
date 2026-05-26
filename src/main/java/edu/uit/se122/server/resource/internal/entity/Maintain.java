@@ -3,9 +3,7 @@ package edu.uit.se122.server.resource.internal.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.uit.se122.server.common.enums.MaintainStatus;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -14,17 +12,17 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Maintain")
-@Data
-@EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"category", "facility", "court"})
-@EqualsAndHashCode(exclude = {"category", "facility", "court"})
+@Getter
+@NoArgsConstructor
 public class Maintain {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer maintainId;
 
+    @Setter
     private String detail;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private MaintainStatus status;
 
@@ -35,18 +33,18 @@ public class Maintain {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "facilityCategoryId")
-    @JsonManagedReference(value = "maintains_category")
     private FacilityCategory category;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "facilityId")
-    @JsonManagedReference(value = "maintains_facility")
     private Facility facility;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courtId")
-    @JsonManagedReference(value = "maintains_court")
     private Court court;
 }

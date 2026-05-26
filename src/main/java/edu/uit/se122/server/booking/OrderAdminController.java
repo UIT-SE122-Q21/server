@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -48,5 +49,10 @@ public class OrderAdminController {
     public ResponseEntity<Object> updateProductOrderDetails(@PathVariable Integer id, @RequestBody List<OrderContract.ProductOrderDetailReq> dtoList) {
         courtOrderService.updateProductOrderDetails(id, dtoList);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
+    }
+
+    @PostMapping("/court/schedule")
+    public ResponseEntity<Map<Integer, List<OrderContract.CourtRes>>> getAllCourtSchedule(@RequestBody OrderContract.CourtReq dto) {
+        return ResponseEntity.ok(courtOrderService.getAllCourtSchedule(dto));
     }
 }

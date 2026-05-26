@@ -44,4 +44,9 @@ public class OrderCustomerController {
         courtOrderService.updateProductOrderDetails(id, dtoList);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
+
+    @PostMapping("/court/schedule")
+    public ResponseEntity<Map<Integer, List<OrderContract.CourtRes>>> getAllCourtSchedule(@RequestBody OrderContract.CourtReq dto) {
+        return ResponseEntity.ok(courtOrderService.getAllCourtSchedule(dto));
+    }
 }
