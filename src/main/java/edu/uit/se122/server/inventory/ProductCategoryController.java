@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/product-category")
+@RequestMapping("/api/admin/product/category")
 @RequiredArgsConstructor
 public class ProductCategoryController {
 

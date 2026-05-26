@@ -52,8 +52,8 @@ public class ProductService {
         product.setStatus(ProductStatus.Available);
         product.setQuantity(0);
         product.setMinQuantity(0);
-        ProductDetail detail = mapToDetail(product, dto.detail());
-        product.getDetails().add(detail);
+        ProductDetail detail = mapToDetail(dto.detail());
+        product.addDetail(detail);
         Product saved = productRepository.save(product);
 
         ProductContract.CreatedEvent event = new ProductContract.CreatedEvent(
@@ -88,37 +88,33 @@ public class ProductService {
 
     public void delete(Integer id) { productRepository.deleteById(id); }
 
-    private void updateDetailEntity(Product entity, List<ProductContract.DetailReq> dtoList) {
+    private void updateDetailEntity(Product entity, List<ProductContract.DetailUpdateReq> dtoList) {
         Map<Integer, ProductDetail> existingDetailsMap = entity.getDetails().stream()
                 .collect(Collectors.toMap(ProductDetail::getProductDetailId, d -> d));
 
-        for (ProductContract.DetailReq dto : dtoList) {
+        for (ProductContract.DetailUpdateReq dto : dtoList) {
             ProductDetail detail;
             if (dto.productDetailId() != null && existingDetailsMap.containsKey(dto.productDetailId())) {
                 detail = existingDetailsMap.get(dto.productDetailId());
-                detail.setBarcode(dto.barcode());
-                detail.setCapacity(dto.capacity());
-                detail.setUnit(dto.unit());
-                detail.setUnitPrice(dto.unitPrice());
-                detail.setSaleType(dto.saleType());
+                detail.setBarcode(dto.detail().barcode());
+                detail.setCapacity(dto.detail().capacity());
+                detail.setUnit(dto.detail().unit());
+                detail.setUnitPrice(dto.detail().unitPrice());
+                detail.setSaleType(dto.detail().saleType());
             } else {
-                detail = mapToDetail(entity, dto);
-                entity.getDetails().add(detail);
+                detail = mapToDetail(dto.detail());
+                entity.addDetail(detail);
             }
         }
     }
 
-    private ProductDetail mapToDetail(Product entity, ProductContract.DetailReq dto) {
+    private ProductDetail mapToDetail(ProductContract.DetailReq dto) {
         ProductDetail detail = new ProductDetail();
-        if (dto.productDetailId() != null) {
-            detail.setProductDetailId(dto.productDetailId());
-        }
         detail.setBarcode(dto.barcode());
         detail.setCapacity(dto.capacity());
         detail.setUnit(dto.unit());
         detail.setUnitPrice(dto.unitPrice());
         detail.setSaleType(dto.saleType());
-        detail.setProduct(entity);
         return detail;
     }
 

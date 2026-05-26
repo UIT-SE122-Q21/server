@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Repository
 public interface CourtOrderRepository extends JpaRepository<CourtOrder, Integer> {
@@ -42,4 +43,6 @@ public interface CourtOrderRepository extends JpaRepository<CourtOrder, Integer>
             @Param("productId") Integer productId,
             @Param("orderDate") LocalDate orderDate
     );
+
+    List<CourtOrder> findByMemberId(Integer memberId);
 }

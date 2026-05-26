@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/product-import")
+@RequestMapping("/api/admin/product/import")
 @RequiredArgsConstructor
 public class ProductImportController {
     private final ProductImportService importService;

@@ -41,21 +41,6 @@ public class AuthService {
     @Value("${app.base-url}")
     private String baseUrl;
 
-    public void registerAdmin(AuthContract.AdminRegisterReq dto) {
-        Integer maxId = administratorRepository.findMaxAdminId();
-        int newMemberId;
-        if (maxId == null) {
-            newMemberId = 236 * 1000 + 1;
-        } else {
-            newMemberId = maxId + 1;
-        }
-
-        Administrator admin = new Administrator();
-        updateAdminEntity(admin, dto);
-        admin.setAdminId(newMemberId);
-        administratorRepository.save(admin);
-    }
-
     public void registerMember(AuthContract.RegisterMemberRequest dto) {
         Integer maxId = memberRepository.findMaxMemberId();
         int newMemberId;
@@ -110,7 +95,7 @@ public class AuthService {
         }
         String jwtToken = jwtService.generateToken(admin.getAdminId().toString(), admin.getEmail(), LoginRole.ADMIN.toString());
 
-        return new AuthContract.LoginAdminResponse(jwtToken, admin.getAdminId(), admin.getName());
+        return new AuthContract.LoginAdminResponse(jwtToken, admin.getAdminId(), admin.getName(), admin.getRole());
     }
 
     public AuthContract.LoginMemberResponse loginMember(AuthContract.LoginMemberRequest dto) {
@@ -150,14 +135,6 @@ public class AuthService {
                 member.getName(),
                 member.getEmail()
         );
-    }
-
-    private void updateAdminEntity(Administrator entity, AuthContract.AdminRegisterReq dto) {
-        entity.setName(dto.name());
-        entity.setEmail(dto.email());
-        entity.setPassword(passwordEncoder.encode(dto.password()));
-        entity.setColor("#E6F1FB");
-        entity.setRole(AdminRole.Employee);
     }
 
     public void updateMemberEntity(Member entity, AuthContract.RegisterMemberRequest dto) {

@@ -1,26 +1,26 @@
 services:
   db:
     image: postgres:latest
-    container_name: SmashIt
+    container_name: SmashIt_DB
     environment:
-      POSTGRES_USER: ${POSTGRES_USERNAME:username_of_postgres_user}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:password_of_postgres_user}
+      POSTGRES_USER: ${POSTGRES_USERNAME:-username_of_postgres_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password_of_postgres_user}
       POSTGRES_DB: postgres
     ports:
       - "5432:5432"
 
   backend:
     build: .
-    container_name: server
+    container_name: SmashIt_Backend
     ports:
       - "8080:8080"
     depends_on:
       - db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
-      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME:username_of_postgres_user}
-      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:password_of_postgres_user}
-      - SPRING_MAIL_USERNAME=${BREVO_LOGIN:email_username}
-      - SPRING_MAIL_PASSWORD=${BREVO_PASSWORD:email_password}
-      - SPRING_MAIL_SENDER=${BREVO_EMAIL:email_sender}
-      - APP_JWT_SECRET=${JWT_SECRET:jwt_secret}
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USERNAME:-username_of_postgres_user}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD:-password_of_postgres_user}
+      - SPRING_MAIL_USERNAME=${BREVO_LOGIN:-email_username}
+      - SPRING_MAIL_PASSWORD=${BREVO_PASSWORD:-email_password}
+      - SPRING_MAIL_SENDER=${BREVO_EMAIL:-email_sender}
+      - APP_JWT_SECRET=${JWT_SECRET:-jwt_secret}

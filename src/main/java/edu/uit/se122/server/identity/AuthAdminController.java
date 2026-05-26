@@ -16,12 +16,6 @@ import java.util.Map;
 public class AuthAdminController {
     private final AuthService authService;
 
-    @PostMapping("/register")
-    public ResponseEntity<Object> register(@RequestBody AuthContract.AdminRegisterReq dto) {
-        authService.registerAdmin(dto);
-        return ResponseEntity.ok(Map.of("message", "Đăng ký thành công"));
-    }
-
     @PostMapping("/login")
     public ResponseEntity<AuthContract.LoginAdminResponse> login(@RequestBody AuthContract.LoginAdminRequest dto) {
         return ResponseEntity.ok(authService.loginAdmin(dto));

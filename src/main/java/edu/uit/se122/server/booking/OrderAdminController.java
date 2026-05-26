@@ -15,17 +15,22 @@ import java.util.Map;
 public class OrderAdminController {
     private final CourtOrderService courtOrderService;
 
-    @PostMapping("/court")
+    @GetMapping
+    public ResponseEntity<List<OrderContract.ResByAdmin>> getAll() {
+        return ResponseEntity.ok(courtOrderService.getAllByAdmin());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<OrderContract.ResByAdmin> getById(@PathVariable Integer id) {
+        return ResponseEntity.ok(courtOrderService.getById(id));
+    }
+
+    @PostMapping
     public ResponseEntity<OrderContract.CreatedOrderRes> createOrder(
             @AuthenticationPrincipal Integer adminId,
             @RequestBody OrderContract.CreateOrderByAdminReq dto
     ) {
         return ResponseEntity.ok(courtOrderService.createOrderByAdmin(adminId, dto));
-    }
-
-    @GetMapping("/history")
-    public ResponseEntity<List<OrderContract.OrderHistoryRes>> getOrderHistory() {
-        return ResponseEntity.ok(courtOrderService.getOrderHistory());
     }
 
     @PostMapping("/{id}/calculate")

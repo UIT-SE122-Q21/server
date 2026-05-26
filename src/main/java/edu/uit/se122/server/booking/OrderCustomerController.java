@@ -16,16 +16,11 @@ public class OrderCustomerController {
     private final CourtOrderService courtOrderService;
 
     @GetMapping
-    public ResponseEntity<List<OrderContract.Res>> getAll() {
-        return ResponseEntity.ok(courtOrderService.getAll());
+    public ResponseEntity<List<OrderContract.ResByCustomer>> getAll(@AuthenticationPrincipal Integer userId) {
+        return ResponseEntity.ok(courtOrderService.getAllByCustomer(userId));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<OrderContract.Res> getById(@PathVariable Integer id) {
-        return ResponseEntity.ok(courtOrderService.getById(id));
-    }
-
-    @PostMapping("/court")
+    @PostMapping
     public ResponseEntity<OrderContract.CreatedOrderRes> create(
             @AuthenticationPrincipal Integer userId,
             @RequestBody OrderContract.CreateOrderByCustomerReq dto

@@ -6,7 +6,7 @@ COPY . .
 RUN ./gradlew bootJar -x test
 
 # Giai đoạn 2: Chạy ứng dụng
-FROM eclipse-temurin:21-jdk-alpine
+FROM bellsoft/liberica-openjdk-alpine:21
 WORKDIR /app
 # Copy file jar từ giai đoạn build sang
 COPY --from=build /app/build/libs/*.jar app.jar

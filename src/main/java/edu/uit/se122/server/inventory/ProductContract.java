@@ -2,6 +2,10 @@ package edu.uit.se122.server.inventory;
 
 import edu.uit.se122.server.common.enums.ProductStatus;
 import edu.uit.se122.server.common.enums.SaleType;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -35,7 +39,7 @@ public interface ProductContract {
 
     record UpdateReq(
             String productName,
-            List<DetailReq> details
+            List<DetailUpdateReq> details
     ) {}
 
     record UpdateQuantityReq(
@@ -43,12 +47,16 @@ public interface ProductContract {
     ) {}
 
     record DetailReq(
-            Integer productDetailId,
             String barcode,
             Integer capacity,
             String unit,
             BigDecimal unitPrice,
             SaleType saleType
+    ) {}
+
+    record DetailUpdateReq(
+            Integer productDetailId,
+            DetailReq detail
     ) {}
 
     record CreatedEvent(

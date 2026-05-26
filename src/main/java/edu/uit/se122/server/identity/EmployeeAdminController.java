@@ -1,8 +1,6 @@
 package edu.uit.se122.server.identity;
 
 import edu.uit.se122.server.identity.internal.service.AdminService;
-import edu.uit.se122.server.identity.internal.service.AuthService;
-import edu.uit.se122.server.inventory.ProductCategoryContract;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,16 +11,28 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/admin/employee")
 @RequiredArgsConstructor
-public class AdminController {
+public class EmployeeAdminController {
     private final AdminService adminService;
 
     @GetMapping()
-    public ResponseEntity<List<AdminContract.Res>> getAll() {
+    public ResponseEntity<List<EmployeeContract.Res>> getAll() {
         return ResponseEntity.ok(adminService.getAll());
     }
 
+    @PostMapping
+    public ResponseEntity<Object> create(@RequestBody EmployeeContract.CreateEmployeeReq dto) {
+        adminService.createEmployee(dto);
+        return ResponseEntity.ok(Map.of("message", "Tạo nhân viên thành công"));
+    }
+
+    @PostMapping("/{id}/change-password")
+    public ResponseEntity<Object> changePassword(@PathVariable Integer id, @RequestBody EmployeeContract.ChangePasswordReq dto) {
+        adminService.changePassword(id, dto);
+        return ResponseEntity.ok(Map.of("message", "Thay đổi mật khẩu thành công"));
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody AdminContract.UpdateReq dto) {
+    public ResponseEntity<Object> update(@PathVariable Integer id, @RequestBody EmployeeContract.UpdateReq dto) {
         adminService.update(id, dto);
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }

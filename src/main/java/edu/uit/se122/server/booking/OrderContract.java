@@ -56,7 +56,7 @@ public interface OrderContract {
             Integer quantity
     ) {}
 
-    record Res(
+    record ResByAdmin(
             Integer courtOrderId,
             LocalDate orderDate,
             LocalTime startHour,
@@ -64,7 +64,6 @@ public interface OrderContract {
             OrderStatus status,
             Integer adminId,
             Integer customerId,
-            Boolean guest,
             String guestName,
             String guestEmail,
             String guestPhoneNumber,
@@ -73,16 +72,13 @@ public interface OrderContract {
             List<Integer> courtIds
     ) {}
 
-    record OrderHistoryRes(
+    record ResByCustomer(
+            Integer courtOrderId,
             LocalDate orderDate,
-            String customerName,
-            List<OrderHistoryDetailRes> details
-    ) {}
-
-    record OrderHistoryDetailRes(
-            Integer productDetailId,
-            String productName,
-            Integer quantity
+            LocalTime startHour,
+            LocalTime endHour,
+            OrderStatus status,
+            List<Integer> courtIds
     ) {}
 
     record CreatedOrderRes(

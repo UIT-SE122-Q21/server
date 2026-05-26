@@ -10,7 +10,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class AuthMemberController {
+public class AuthCustomerController {
     private final AuthService authService;
 
     @PostMapping("/register")

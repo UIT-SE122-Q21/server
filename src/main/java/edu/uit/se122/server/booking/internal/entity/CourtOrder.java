@@ -11,15 +11,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "CourtOrder")
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = {"courtOrderDetails", "productOrderDetails", "orderInvoices"})
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class CourtOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +33,7 @@ public class CourtOrder {
 
     private LocalTime endHour;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
@@ -46,24 +48,44 @@ public class CourtOrder {
 
     private Integer memberId;
 
-    private Boolean guest;
-
     private String guestName;
 
     private String guestEmail;
 
     private String guestPhoneNumber;
 
-    // Navigation: Chi tiết các sân được đặt trong đơn này
+    @Builder.Default
     @OneToMany(mappedBy = "courtOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "courtOrderDetails")
-    private List<CourtOrderDetail> courtOrderDetails;
+    private List<CourtOrderDetail> courtOrderDetails = new ArrayList<>();
 
+    @Builder.Default
     @OneToMany(mappedBy = "courtOrder", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference(value = "productOrderDetails")
-    private List<ProductOrderDetail> productOrderDetails;
+    private List<ProductOrderDetail> productOrderDetails = new ArrayList<>();
 
     @OneToOne(mappedBy = "courtOrder", cascade = CascadeType.ALL)
     @JsonManagedReference(value = "orderInvoices")
-    private OrderInvoice orderInvoices;
+    private OrderInvoice orderInvoice;
+
+    public void addCourtOrderDetail(CourtOrderDetail courtOrderDetail) {
+        if (courtOrderDetails != null) {
+            this.courtOrderDetails.add(courtOrderDetail);
+            courtOrderDetail.setCourtOrder(this);
+        }
+    }
+
+    public void addProductOrderDetail(ProductOrderDetail productOrderDetail) {
+        if (productOrderDetails != null) {
+            this.productOrderDetails.add(productOrderDetail);
+            productOrderDetail.setCourtOrder(this);
+        }
+    }
+
+    public void setOrderInvoice(OrderInvoice orderInvoice) {
+        if (orderInvoice != null) {
+            this.orderInvoice = orderInvoice;
+            orderInvoice.setCourtOrder(this);
+        }
+    }
 }
