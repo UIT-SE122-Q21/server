@@ -77,7 +77,7 @@ public class MaintainService {
                 entity.getUpdatedAt(),
                 entity.getCategory().getName(),
                 Optional.ofNullable(entity.getFacility()).map(Facility::getName).orElse(null),
-                Optional.ofNullable(entity.getCourt()).map(Court::getName).orElse(null)
+                Optional.ofNullable(entity.getCourt()).map(Court::getNumOfIndex).orElse(null)
         );
     }
 }

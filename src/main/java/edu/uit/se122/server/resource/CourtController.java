@@ -3,13 +3,14 @@ package edu.uit.se122.server.resource;
 import edu.uit.se122.server.resource.internal.service.CourtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/court")
+@RequestMapping("/api/admin/court")
 @RequiredArgsConstructor
 public class CourtController {
     private final CourtService courtService;
@@ -43,8 +44,8 @@ public class CourtController {
     }
 
     @PutMapping("/price")
-    public ResponseEntity<Object> updateGlobalCourtPrice(@RequestBody CourtContract.UpdateCourtPriceReq dto) {
-        courtService.updateGlobalCourtPrice(dto);
+    public ResponseEntity<Object> updateGlobalCourtPrice(@AuthenticationPrincipal Integer adminId, @RequestBody CourtContract.UpdateCourtPriceReq dto) {
+        courtService.updateGlobalCourtPrice(adminId, dto);
         return ResponseEntity.ok(Map.of("message", "Cập nhật giá sân thành công"));
     }
 }

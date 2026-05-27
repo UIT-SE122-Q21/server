@@ -36,3 +36,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# Kho lưu trữ log cục bộ
+/logs/

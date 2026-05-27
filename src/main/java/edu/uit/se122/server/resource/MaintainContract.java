@@ -13,7 +13,7 @@ public interface MaintainContract {
             LocalDateTime updatedAt,
             String categoryName,
             String facilityName,
-            String courtName
+            Integer courtIndex
     ) {}
 
     record Req(
