@@ -1,29 +1,22 @@
 package edu.uit.se122.server.resource;
 
-import edu.uit.se122.server.common.enums.CourtStatus;
-
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public interface CourtContract {
     record Response(
             Integer courtId,
-            String name,
             Integer numOfIndex,
-            Double unitPrice,
-            CourtStatus status,
+            Boolean isMaintenance,
             LocalDateTime createdAt,
             LocalDateTime updatedAt
     ) {}
 
     record Request(
-            String name,
-            Integer numOfIndex,
-            Double unitPrice
+            Integer numOfIndex
     ) {}
 
-    record CreatedEvent(
-            Integer courtId,
-            String name,
-            Double unitPrice
+    record UpdateCourtPriceReq(
+            BigDecimal newPrice
     ) {}
 }

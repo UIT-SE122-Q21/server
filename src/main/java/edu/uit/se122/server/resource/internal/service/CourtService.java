@@ -1,14 +1,15 @@
 package edu.uit.se122.server.resource.internal.service;
 
-import edu.uit.se122.server.common.enums.CourtStatus;
 import edu.uit.se122.server.resource.CourtContract;
+import edu.uit.se122.server.resource.internal.component.CourtPrice;
+import edu.uit.se122.server.resource.internal.component.PriceManager;
 import edu.uit.se122.server.resource.internal.entity.Court;
 import edu.uit.se122.server.resource.internal.repository.CourtRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -16,7 +17,7 @@ import java.util.List;
 @Transactional
 public class CourtService {
     private final CourtRepository courtRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final PriceManager priceManager;
 
     public List<CourtContract.Response> getAll() {
         return courtRepository.findAll().stream().map(this::mapToDTO).toList();
@@ -30,14 +31,7 @@ public class CourtService {
     public void create(CourtContract.Request dto) {
         Court court = new Court();
         updateEntity(court, dto);
-        Court saved = courtRepository.save(court);
-
-        CourtContract.CreatedEvent event = new CourtContract.CreatedEvent(
-                saved.getCourtId(),
-                saved.getName(),
-                saved.getUnitPrice()
-        );
-        eventPublisher.publishEvent(event);
+        courtRepository.save(court);
     }
 
     public void update(Integer id, CourtContract.Request dto) {
@@ -47,22 +41,27 @@ public class CourtService {
         courtRepository.save(court);
     }
 
+    public void updateGlobalCourtPrice(CourtContract.UpdateCourtPriceReq dto) {
+        if (dto.newPrice().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Price must be greater than 0");
+        }
+
+        CourtPrice newCourtPrice = new CourtPrice(dto.newPrice());
+        priceManager.updateCourtPrice(newCourtPrice);
+    }
+
     public void delete(Integer id) { courtRepository.deleteById(id); }
 
     private void updateEntity(Court entity, CourtContract.Request dto) {
-        entity.setName(dto.name());
         entity.setNumOfIndex(dto.numOfIndex());
-        entity.setUnitPrice(dto.unitPrice());
-        entity.setStatus(CourtStatus.Available);
+        entity.setMaintenance(false);
     }
 
     private CourtContract.Response mapToDTO(Court entity) {
         return new CourtContract.Response(
                 entity.getCourtId(),
-                entity.getName(),
                 entity.getNumOfIndex(),
-                entity.getUnitPrice(),
-                entity.getStatus(),
+                entity.getMaintenance(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );

@@ -41,4 +41,10 @@ public class CourtController {
         courtService.delete(id);
         return ResponseEntity.ok(Map.of("message", "Xóa thành công"));
     }
+
+    @PutMapping("/price")
+    public ResponseEntity<Object> updateGlobalCourtPrice(@RequestBody CourtContract.UpdateCourtPriceReq dto) {
+        courtService.updateGlobalCourtPrice(dto);
+        return ResponseEntity.ok(Map.of("message", "Cập nhật giá sân thành công"));
+    }
 }

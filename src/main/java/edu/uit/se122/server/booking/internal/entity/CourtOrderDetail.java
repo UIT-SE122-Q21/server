@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalTime;
 
 @Entity
@@ -23,4 +24,7 @@ public class CourtOrderDetail {
 
     @Setter
     private Integer courtId;
+
+    @Setter
+    private BigDecimal priceAtBooking;
 }

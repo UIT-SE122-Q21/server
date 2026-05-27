@@ -7,6 +7,7 @@ import edu.uit.se122.server.common.enums.OrderStatus;
 import edu.uit.se122.server.inventory.ProductApi;
 import edu.uit.se122.server.promotion.PromotionApi;
 import edu.uit.se122.server.promotion.PromotionContract;
+import edu.uit.se122.server.resource.CourtApi;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,9 +15,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.DayOfWeek;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -29,12 +28,10 @@ import java.util.stream.Collectors;
 public class CourtOrderService {
     private final CourtOrderRepository courtOrderRepository;
     private final OrderInvoiceRepository invoiceRepository;
-    private final CourtCacheRepository courtCacheRepository;
     private final ProductCacheRepository productCacheRepository;
-    private final MemberCacheRepository memberCacheRepository;
     private final ProductApi productApi;
     private final PromotionApi promotionApi;
-    private final ApplicationEventPublisher eventPublisher;
+    private final CourtApi courtApi;
 
     public List<OrderContract.ResByAdmin> getAllByAdmin() {
         return courtOrderRepository.findAll().stream().map(this::mapToResponseByAdmin).toList();
@@ -50,17 +47,19 @@ public class CourtOrderService {
     }
 
     public OrderContract.CreatedOrderRes createOrderByAdmin(Integer adminId, OrderContract.CreateOrderByAdminReq dto) {
+        BigDecimal priceAtBooking = courtApi.getCurrentCourtPrice();
         CourtOrder order = CourtOrder.builder()
                 .orderDate(dto.orderDate())
                 .startHour(dto.startHour())
                 .endHour(dto.endHour())
                 .adminId(adminId)
                 .build();
-        return getCreatedOrderRes(order, dto.courtIds(), dto.productDetails());
+        return getCreatedOrderRes(order, dto.courtIds(), dto.productDetails(), priceAtBooking);
     }
 
     public OrderContract.CreatedOrderRes createOrderByCustomer(Integer memberId, OrderContract.CreateOrderByCustomerReq dto) {
         CourtOrder order;
+        BigDecimal priceAtBooking = courtApi.getCurrentCourtPrice();
         if (memberId == null) {
             order = CourtOrder.builder()
                     .orderDate(dto.orderDate())
@@ -78,7 +77,7 @@ public class CourtOrderService {
                     .memberId(memberId)
                     .build();
         }
-        return getCreatedOrderRes(order, dto.courtIds(), dto.productDetails());
+        return getCreatedOrderRes(order, dto.courtIds(), dto.productDetails(), priceAtBooking);
     }
 
     public void updateProductOrderDetails(Integer courtOrderId, List<OrderContract.ProductOrderDetailReq> dtoList) {
@@ -187,19 +186,9 @@ public class CourtOrderService {
     }
 
     private BigDecimal calculateCourtTotalBeforeDiscount(CourtOrder courtOrder) {
-        BigDecimal courtTotalAmount = BigDecimal.ZERO;
         Duration duration = Duration.between(courtOrder.getStartHour(), courtOrder.getEndHour());
-
-        for (CourtOrderDetail detail : courtOrder.getCourtOrderDetails()) {
-            CourtCache courtCache = courtCacheRepository.findById(detail.getCourtId())
-                    .orElseThrow(() -> new RuntimeException("Court not found"));
-
-            double hours = duration.toMinutes() / 60.0;
-            double amount = courtCache.getUnitPrice() * hours;
-
-            courtTotalAmount = courtTotalAmount.add(BigDecimal.valueOf(amount));
-        }
-        return courtTotalAmount;
+        double hours = duration.toMinutes() / 60.0;
+        return courtApi.getCurrentCourtPrice().multiply(BigDecimal.valueOf(hours)).multiply(BigDecimal.valueOf(courtOrder.getCourtOrderDetails().size()));
     }
 
     private void checkOrderedProduct(CourtOrder courtOrder, List<OrderContract.ProductOrderDetailReq> dtoList) {
@@ -248,22 +237,23 @@ public class CourtOrderService {
         return productTotalAmount;
     }
 
-    private OrderContract.CreatedOrderRes getCreatedOrderRes(CourtOrder order, List<Integer> courtIds, List<OrderContract.ProductOrderDetailReq> productOrderDetailReqs) {
+    private OrderContract.CreatedOrderRes getCreatedOrderRes(CourtOrder order, List<Integer> courtIds, List<OrderContract.ProductOrderDetailReq> productOrderDetailReqs, BigDecimal priceAtBooking) {
         if (productOrderDetailReqs != null) {
             checkOrderedProduct(order, productOrderDetailReqs);
             List<ProductOrderDetail> productDetails = productOrderDetailReqs.stream().map(this::mapToProductOrderDetail).toList();
             for (ProductOrderDetail detail : productDetails) { order.addProductOrderDetail(detail); }
         }
-        List<CourtOrderDetail> courtOrderDetails = courtIds.stream().map(this::mapToCourtOrderDetails).toList();
+        List<CourtOrderDetail> courtOrderDetails = courtIds.stream().map(courtId -> mapToCourtOrderDetails(courtId, priceAtBooking)).toList();
         for (CourtOrderDetail detail : courtOrderDetails) { order.addCourtOrderDetail(detail); }
         order.setStatus(OrderStatus.WaitingForPayment);
         CourtOrder saved = courtOrderRepository.save(order);
         return new OrderContract.CreatedOrderRes(saved.getCourtOrderId());
     }
 
-    private CourtOrderDetail mapToCourtOrderDetails(Integer courtId) {
+    private CourtOrderDetail mapToCourtOrderDetails(Integer courtId, BigDecimal priceAtBooking) {
         CourtOrderDetail detail = new CourtOrderDetail();
         detail.setCourtId(courtId);
+        detail.setPriceAtBooking(priceAtBooking);
         return detail;
     }
 
