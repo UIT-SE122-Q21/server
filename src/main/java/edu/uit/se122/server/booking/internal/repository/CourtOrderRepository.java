@@ -17,7 +17,7 @@ public interface CourtOrderRepository extends JpaRepository<CourtOrder, Integer>
         SELECT COALESCE(SUM(pod.quantity), 0)
         FROM CourtOrder co
         JOIN co.productOrderDetails pod
-        WHERE co.status = "Ordered"
+        WHERE co.status = "ORDERED"
         AND pod.productId = :productId
         AND co.orderDate = :orderDate
         AND
@@ -36,7 +36,7 @@ public interface CourtOrderRepository extends JpaRepository<CourtOrder, Integer>
         SELECT COALESCE(SUM(pod.quantity), 0)
         FROM CourtOrder co
         JOIN co.productOrderDetails pod
-        WHERE co.status = "Ordered"
+        WHERE co.status = "ORDERED"
         AND pod.productId = :productId
         AND co.orderDate >= :orderDate
     """)
@@ -50,7 +50,7 @@ public interface CourtOrderRepository extends JpaRepository<CourtOrder, Integer>
        FROM CourtOrder co
        JOIN co.courtOrderDetails cod
        WHERE co.orderDate = :orderDate
-       AND (co.status = 'WaitingForPayment' OR co.status = 'Ordered')
+       AND (co.status = 'WAITING_FOR_PAYMENT' OR co.status = 'ORDERED')
     """)
     List<OrderContract.CourtRes> getAllCourtSchedule(@Param("orderDate") LocalDate orderDate);
 

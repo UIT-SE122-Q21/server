@@ -7,16 +7,16 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "Together")
 @Data
-@ToString(exclude = "chat")
-@EqualsAndHashCode(exclude = "chat")
 @EntityListeners(AuditingEntityListener.class)
 public class Together {
     @Id
@@ -27,22 +27,16 @@ public class Together {
     private TogetherStatus status;
 
     private String content;
+    private Integer numOfPlayersPrefix = 0;
+    private Integer numOfPlayersJoined = 0;
 
-    private Integer numOfPlayers;
-
-    private LocalDate planDate;
-
-    private LocalDateTime fromTime;
-
-    private LocalDateTime toTime;
-
-    @CreatedBy
+    @CreatedDate
     @Column(updatable = false)
-    private Integer memberId;
+    private LocalDateTime createdAt;
 
     private Integer courtOrderId;
 
-    @OneToOne(mappedBy = "together", cascade = CascadeType.ALL)
-    @JsonManagedReference(value = "chat")
-    private Chat chat;
+    @OneToMany(mappedBy = "together", cascade = CascadeType.ALL)
+    @JsonManagedReference(value = "together-member")
+    private List<TogetherMember> togetherMembers;
 }

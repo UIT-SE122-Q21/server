@@ -1,3 +1,3 @@
 package edu.uit.se122.server.common.enums;
 
-public enum OrderStatus { WaitingForPayment, Ordered, Canceled, Completed }
+public enum OrderStatus { WAITING_FOR_PAYMENT, ORDERED, CANCELED, COMPLETED }

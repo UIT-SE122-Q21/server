@@ -15,6 +15,8 @@ import edu.uit.se122.server.identity.internal.repository.RefreshTokenRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,7 @@ public class AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final EmailService emailService;
     private final RefreshTokenService refreshTokenService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Value("${app.base-url}")
     private String baseUrl;
@@ -72,8 +75,10 @@ public class AuthService {
 
         Member member = memberToken.getMember();
         member.setVerified(true);
-        memberRepository.save(member);
         memberTokenRepository.delete(memberToken);
+
+        AuthContract.CreatedMemberEvent event = new AuthContract.CreatedMemberEvent(member.getMemberId(), member.getName());
+        eventPublisher.publishEvent(event);
     }
 
     public AuthContract.LoginAdminResponse loginAdmin(AuthContract.LoginAdminRequest dto) {

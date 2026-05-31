@@ -2,24 +2,30 @@ package edu.uit.se122.server.social;
 
 import edu.uit.se122.server.common.enums.TogetherStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 public interface TogetherContract {
-    record Response(
+    record Res(
             Integer togetherId,
-            Integer memberId,
             TogetherStatus status,
             String content,
-            Integer numOfPlayers,
-            LocalDateTime fromTime,
-            LocalDateTime toTime
+            Integer numOfPlayersPrefix,
+            Integer numOfPlayersJoined,
+            LocalDate orderDate,
+            LocalTime startHour,
+            LocalTime endHour,
+            List<Integer> memberIds
     ) {}
 
-    record Request(
-            TogetherStatus status,
+    record Req(
             String content,
-            Integer numOfPlayers,
-            LocalDateTime fromTime,
-            LocalDateTime toTime
+            Integer numOfPlayersPrefix
+    ) {}
+
+    record JoinReq(
+            Integer memberId
     ) {}
 }

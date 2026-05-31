@@ -114,4 +114,11 @@ public interface OrderContract {
     record CourtReq (
             LocalDate orderDate
     ) {}
+
+    record CreatedOrderEvent(
+            Integer courtOrderId,
+            LocalDate orderDate,
+            LocalTime startHour,
+            LocalTime endHour
+    ) {}
 }

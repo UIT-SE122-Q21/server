@@ -16,8 +16,6 @@ import java.time.LocalDateTime;
 @Table(name = "ChatDetail")
 @Data
 @EntityListeners(AuditingEntityListener.class)
-@ToString(exclude = "chat")
-@EqualsAndHashCode(exclude = "chat")
 public class ChatDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,9 +30,4 @@ public class ChatDetail {
     @CreatedBy
     @Column(updatable = false)
     private String memberId;
-
-    @ManyToOne
-    @JoinColumn(name = "ChatId")
-    @JsonBackReference(value = "details")
-    private Chat chat;
 }

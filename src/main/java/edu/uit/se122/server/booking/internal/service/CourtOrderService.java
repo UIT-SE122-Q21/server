@@ -148,7 +148,7 @@ public class CourtOrderService {
         OrderContract.CalculateDepositRes calculateResult = calculateDepositValue(id);
         CourtOrder courtOrder = courtOrderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Court order not found"));
-        courtOrder.setStatus(OrderStatus.Ordered);
+//        courtOrder.setStatus(OrderStatus.Ordered);
 
         OrderInvoice invoice = new OrderInvoice();
         invoice.setDepositAmount(calculateResult.depositAmount());
@@ -169,7 +169,7 @@ public class CourtOrderService {
         }
         productApi.decreaseQuantity(details);
 
-        courtOrder.setStatus(OrderStatus.Completed);
+//        courtOrder.setStatus(OrderStatus.Completed);
         OrderInvoice invoice = new OrderInvoice();
         invoice.setTotalAmount(calculateResult.totalAmount());
         invoice.setGivenAmount(dto.givenAmount());
@@ -245,7 +245,7 @@ public class CourtOrderService {
         }
         List<CourtOrderDetail> courtOrderDetails = courtIds.stream().map(courtId -> mapToCourtOrderDetails(courtId, priceAtBooking)).toList();
         for (CourtOrderDetail detail : courtOrderDetails) { order.addCourtOrderDetail(detail); }
-        order.setStatus(OrderStatus.WaitingForPayment);
+        order.setStatus(OrderStatus.WAITING_FOR_PAYMENT);
         CourtOrder saved = courtOrderRepository.save(order);
         return new OrderContract.CreatedOrderRes(saved.getCourtOrderId());
     }

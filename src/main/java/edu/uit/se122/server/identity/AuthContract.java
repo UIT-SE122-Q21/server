@@ -36,4 +36,9 @@ public interface AuthContract {
     record RefreshTokenRequest(
             String refreshToken
     ) {}
+
+    record CreatedMemberEvent(
+            Integer memberId,
+            String name
+    ) {}
 }

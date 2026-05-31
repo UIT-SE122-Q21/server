@@ -30,7 +30,6 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-mail")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("org.mvel:mvel2:2.5.2.Final")
     implementation("io.jsonwebtoken:jjwt-api:${jjwtVersion}")
     compileOnly("org.projectlombok:lombok")

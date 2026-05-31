@@ -10,8 +10,10 @@ import edu.uit.se122.server.booking.internal.repository.CourtOrderRepository;
 import edu.uit.se122.server.booking.internal.utils.DateTimeUtils;
 import edu.uit.se122.server.booking.internal.utils.HmacMacUtils;
 import edu.uit.se122.server.common.enums.OrderStatus;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,7 @@ public class ZaloPayService {
     private final CourtOrderRepository courtOrderRepository;
     private final ZaloPayProperties properties;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ApplicationEventPublisher eventPublisher;
 
     public ZaloPayContract.OrderRes createPayment(Integer courtOrderId, OrderContract.CreateInvoiceByAdminReq dto) {
         CourtOrder courtOrder = courtOrderRepository.findById(courtOrderId)
@@ -84,11 +87,13 @@ public class ZaloPayService {
         if (zaloPayRes != null) {
             log.info("ZaloPayOrderResponse: {}", zaloPayRes);
             courtOrder.setTransactionId(appTransId);
+            courtOrderRepository.save(courtOrder);
         }
 
         return zaloPayRes;
     }
 
+    @Transactional
     public ZaloPayContract.CallbackStatusRes handlePaymentCallback(ZaloPayContract.Callback callback) {
         log.info("📩 Callback received: {}", objectMapper.writeValueAsString(callback));
         String data = callback.data();
@@ -112,7 +117,17 @@ public class ZaloPayService {
 
         CourtOrder courtOrder = courtOrderRepository.findByTransactionId(appTransId)
                 .orElseThrow(() -> new IllegalArgumentException("Court order not found for transaction ID: " + appTransId));
-        courtOrder.setStatus(OrderStatus.Completed);
+        log.info("Court order found: {}", courtOrder);
+        if (courtOrder.getStatus() == OrderStatus.WAITING_FOR_PAYMENT) {
+            courtOrder.setStatus(OrderStatus.ORDERED);
+            OrderContract.CreatedOrderEvent event = new OrderContract.CreatedOrderEvent(
+                    courtOrder.getCourtOrderId(),
+                    courtOrder.getOrderDate(),
+                    courtOrder.getStartHour(),
+                    courtOrder.getEndHour()
+            );
+            eventPublisher.publishEvent(event);
+        }
 
         return new ZaloPayContract.CallbackStatusRes(1, "OK");
     }
