@@ -27,6 +27,9 @@ public class CourtOrder {
     @EqualsAndHashCode.Include
     private Integer courtOrderId;
 
+    @Setter
+    private String transactionId;
+
     private LocalDate orderDate;
 
     private LocalTime startHour;
