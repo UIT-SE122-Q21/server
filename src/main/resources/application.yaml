@@ -48,6 +48,8 @@ app:
     key1: ${ZALOPAY_KEY1:your_zalopay_key1}
     key2: ${ZALOPAY_KEY2:your_zalopay_key2}
     create-url: ${ZALOPAY_CREATE_URL:https://sandbox.zalopay.com.vn/v001/create}
+    refund-url: ${ZALOPAY_REFUND_URL:https://sandbox.zalopay.com.vn/v001refund}
+    query_refund-url: ${ZALOPAY_QUERY_REFUND_URL:https://sandbox.zalopay.com.vn/v001/query_refund}
     callback-url: ${ZALOPAY_CALLBACK_URL:http://localhost:8080/api/v1/zalopay/callback}
     return-url: ${ZALOPAY_RETURN_URL:http://localhost:8080/api/v1/zalopay/return}
 springdoc:

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 import tools.jackson.databind.ObjectMapper;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -86,7 +87,7 @@ public class ZaloPayService {
                 .body(ZaloPayContract.OrderRes.class);
         if (zaloPayRes != null) {
             log.info("ZaloPayOrderResponse: {}", zaloPayRes);
-            courtOrder.setTransactionId(appTransId);
+            courtOrder.setAppTransId(appTransId);
             courtOrderRepository.save(courtOrder);
         }
 
@@ -115,8 +116,9 @@ public class ZaloPayService {
         ZaloPayContract.CallbackData parsedData = objectMapper.readValue(data, ZaloPayContract.CallbackData.class);
         String appTransId = parsedData.getAppTransId();
 
-        CourtOrder courtOrder = courtOrderRepository.findByTransactionId(appTransId)
+        CourtOrder courtOrder = courtOrderRepository.findByAppTransId(appTransId)
                 .orElseThrow(() -> new IllegalArgumentException("Court order not found for transaction ID: " + appTransId));
+        courtOrder.setZpTransId(parsedData.getZpTransId());
         log.info("Court order found: {}", courtOrder);
         if (courtOrder.getStatus() == OrderStatus.WAITING_FOR_PAYMENT) {
             courtOrder.setStatus(OrderStatus.ORDERED);
@@ -130,5 +132,43 @@ public class ZaloPayService {
         }
 
         return new ZaloPayContract.CallbackStatusRes(1, "OK");
+    }
+
+    public void handleRefund(Integer courtOrderId, BigDecimal depositAmount) {
+        CourtOrder courtOrder = courtOrderRepository.findById(courtOrderId)
+                .orElseThrow(() -> new IllegalArgumentException("Court order not found"));
+
+        LocalDateTime now = LocalDateTime.now();
+        String yyMMdd = now.format(DateTimeFormatter.ofPattern("yyMMdd"));
+        String mRefundId = yyMMdd + "_" + properties.getAppId() + "_" + (System.currentTimeMillis() % 100000);
+        Long amount = (depositAmount.multiply(BigDecimal.valueOf(0.5))).longValue();
+        long timestamp = System.currentTimeMillis();
+        String description = "Hoàn tiền mã đơn " + courtOrderId;
+        String raw;
+        // Trường hợp CÓ phí hoàn
+        raw = String.format("%d|%d|%d|%s|%d",
+                Integer.valueOf(properties.getAppId()), courtOrder.getZpTransId(), amount, description, timestamp);
+        String mac = HmacMacUtils.hmacSha256Hex(properties.getKey1(), raw);
+
+        ZaloPayContract.RefundReq payload = ZaloPayContract.RefundReq.builder()
+                .mRefundId(mRefundId)
+                .appId(Integer.valueOf(properties.getAppId()))
+                .zpTransId(courtOrder.getZpTransId().toString())
+                .amount(amount)
+                .timestamp(timestamp)
+                .mac(mac)
+                .description(description)
+                .build();
+        ZaloPayContract.RefundRes refundRes = restClient.post()
+                .uri(properties.getRefundUrl())
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(payload)
+                .retrieve()
+                .body(ZaloPayContract.RefundRes.class);
+        if (refundRes != null && (refundRes.returnCode() == 1 || refundRes.returnCode() == 3)) {
+            courtOrder.setRefundId(refundRes.refundId());
+            courtOrder.setStatus(OrderStatus.CANCELED);
+        }
+        courtOrderRepository.save(courtOrder);
     }
 }

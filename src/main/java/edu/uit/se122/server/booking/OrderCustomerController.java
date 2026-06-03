@@ -45,6 +45,12 @@ public class OrderCustomerController {
         return ResponseEntity.ok(Map.of("message", "Chỉnh sửa thành công"));
     }
 
+    @PostMapping("/cancel/{id}")
+    public ResponseEntity<Object> cancelOrder(@PathVariable Integer id) {
+        courtOrderService.cancelOrder(id);
+        return ResponseEntity.ok(Map.of("message", "Hủy đơn thành công"));
+    }
+
     @PostMapping("/court/schedule")
     public ResponseEntity<Map<Integer, List<OrderContract.CourtRes>>> getAllCourtSchedule(@RequestBody OrderContract.CourtReq dto) {
         return ResponseEntity.ok(courtOrderService.getAllCourtSchedule(dto));

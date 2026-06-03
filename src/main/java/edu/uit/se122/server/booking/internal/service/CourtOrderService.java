@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +33,7 @@ public class CourtOrderService {
     private final ProductApi productApi;
     private final PromotionApi promotionApi;
     private final CourtApi courtApi;
+    private final ZaloPayService zaloPayService;
 
     public List<OrderContract.ResByAdmin> getAllByAdmin() {
         return courtOrderRepository.findAll().stream().map(this::mapToResponseByAdmin).toList();
@@ -114,10 +116,6 @@ public class CourtOrderService {
 
         BigDecimal courtTotalAmount = calculateCourtTotalBeforeDiscount(courtOrder);
         BigDecimal depositAmount = courtTotalAmount.multiply(BigDecimal.valueOf(0.5));
-        OrderInvoice invoice = new OrderInvoice();
-        invoice.setDepositAmount(depositAmount);
-        invoice.setCourtOrder(courtOrder);
-        invoiceRepository.save(invoice);
 
         return new OrderContract.CalculateDepositRes(depositAmount);
     }
@@ -183,6 +181,20 @@ public class CourtOrderService {
         List<OrderContract.CourtRes> weeklySchedule = courtOrderRepository.getAllCourtSchedule(dto.orderDate());
 
         return weeklySchedule.stream().collect(Collectors.groupingBy(OrderContract.CourtRes::getCourtId));
+    }
+
+    public void cancelOrder(Integer id) {
+        CourtOrder courtOrder = courtOrderRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Court order not found"));
+        boolean isUnder24Hours = Duration
+                .between(LocalDateTime.now(), LocalDateTime.of(courtOrder.getOrderDate(), courtOrder.getStartHour()))
+                .toHours() < 24;
+
+        if (!isUnder24Hours) {
+            zaloPayService.handleRefund(id, courtOrder.getOrderInvoice().getDepositAmount());
+        } else {
+            throw new RuntimeException("Cannot cancel order within 24 hours");
+        }
     }
 
     private BigDecimal calculateCourtTotalBeforeDiscount(CourtOrder courtOrder) {

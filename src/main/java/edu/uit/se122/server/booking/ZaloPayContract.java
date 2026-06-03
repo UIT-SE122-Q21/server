@@ -59,4 +59,40 @@ public interface ZaloPayContract {
             @JsonProperty("return_code") int returnCode,
             @JsonProperty("return_message") String returnMessage
     ) {}
+
+    @Data
+    @Builder
+    class RefundReq {
+        @JsonProperty("m_refund_id") String mRefundId;
+        @JsonProperty("app_id") Integer appId;
+        @JsonProperty("zp_trans_id") String zpTransId;
+        @JsonProperty("amount") Long amount;
+        @JsonProperty("timestamp") Long timestamp;
+        @JsonProperty("mac") String mac;
+        @JsonProperty("description") String description;
+    }
+
+    record RefundRes(
+            @JsonProperty("return_code") Integer returnCode,
+            @JsonProperty("return_message") String returnMessage,
+            @JsonProperty("sub_return_code") Integer subReturnCode,
+            @JsonProperty("sub_return_message") String subReturnMessage,
+            @JsonProperty("refund_id") Long refundId
+    ) {}
+
+    @Data
+    @Builder
+    class QueryRefundReq {
+        @JsonProperty("app_id") Integer appId;
+        @JsonProperty("m_refund_id") String mRefundId;
+        @JsonProperty("timestamp") Long timestamp;
+        @JsonProperty("mac") String mac;
+    }
+
+    record QueryRefundRes(
+            Integer returnCode,
+            String returnMessage,
+            Integer subReturnCode,
+            String subReturnMessage
+    ) {}
 }

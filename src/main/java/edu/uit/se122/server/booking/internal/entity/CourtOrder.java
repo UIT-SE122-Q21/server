@@ -28,7 +28,13 @@ public class CourtOrder {
     private Integer courtOrderId;
 
     @Setter
-    private String transactionId;
+    private String appTransId;
+
+    @Setter
+    private Long zpTransId;
+
+    @Setter
+    private Long refundId;
 
     private LocalDate orderDate;
 

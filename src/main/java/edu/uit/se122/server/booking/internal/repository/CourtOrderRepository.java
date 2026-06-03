@@ -56,5 +56,5 @@ public interface CourtOrderRepository extends JpaRepository<CourtOrder, Integer>
 
     List<CourtOrder> findByMemberId(Integer memberId);
 
-    Optional<CourtOrder> findByTransactionId(String appTransId);
+    Optional<CourtOrder> findByAppTransId(String appTransId);
 }
