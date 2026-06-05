@@ -14,7 +14,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:5173", "https://gift-saxophone-creative.ngrok-free.dev", "http://localhost:8000/")
+                        .allowedOrigins("http://localhost:5173", "https://gift-saxophone-creative.ngrok-free.dev", "http://localhost:8081", "http://192.168.110.39:8080")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

@@ -121,4 +121,8 @@ public interface OrderContract {
             LocalTime startHour,
             LocalTime endHour
     ) {}
+
+    record CheckOutEvent(
+            Integer courtOrderId
+    ) {}
 }

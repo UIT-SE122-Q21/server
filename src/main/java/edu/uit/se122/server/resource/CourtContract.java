@@ -8,6 +8,7 @@ public interface CourtContract {
             Integer courtId,
             Integer numOfIndex,
             Boolean isMaintenance,
+            BigDecimal unitPrice,
             LocalDateTime createdAt,
             LocalDateTime updatedAt
     ) {}

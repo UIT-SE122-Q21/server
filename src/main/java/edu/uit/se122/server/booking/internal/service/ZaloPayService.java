@@ -129,6 +129,8 @@ public class ZaloPayService {
                     courtOrder.getEndHour()
             );
             eventPublisher.publishEvent(event);
+        } else if (courtOrder.getStatus() == OrderStatus.CHECK_IN) {
+            courtOrder.setStatus(OrderStatus.CHECK_OUT);
         }
 
         return new ZaloPayContract.CallbackStatusRes(1, "OK");
@@ -166,7 +168,6 @@ public class ZaloPayService {
                 .retrieve()
                 .body(ZaloPayContract.RefundRes.class);
         if (refundRes != null && (refundRes.returnCode() == 1 || refundRes.returnCode() == 3)) {
-            courtOrder.setRefundId(refundRes.refundId());
             courtOrder.setStatus(OrderStatus.CANCELED);
         }
         courtOrderRepository.save(courtOrder);

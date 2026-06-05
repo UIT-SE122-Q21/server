@@ -33,9 +33,6 @@ public class CourtOrder {
     @Setter
     private Long zpTransId;
 
-    @Setter
-    private Long refundId;
-
     private LocalDate orderDate;
 
     private LocalTime startHour;

@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 public interface ZaloPayContract {
     @Data
     @Builder
@@ -44,7 +46,7 @@ public interface ZaloPayContract {
         @JsonProperty("app_trans_id") private String appTransId;
         @JsonProperty("app_time") private Long appTime;
         @JsonProperty("app_user") private String appUser;
-        @JsonProperty("amount") private Long amount;
+        @JsonProperty("amount") private BigDecimal amount;
         @JsonProperty("embed_data") private String embedData;
         @JsonProperty("item") private String item;
         @JsonProperty("zp_trans_id") private Long zpTransId;

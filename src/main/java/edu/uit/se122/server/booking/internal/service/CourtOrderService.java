@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,7 @@ public class CourtOrderService {
     private final ProductApi productApi;
     private final PromotionApi promotionApi;
     private final CourtApi courtApi;
-    private final ZaloPayService zaloPayService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public List<OrderContract.ResByAdmin> getAllByAdmin() {
         return courtOrderRepository.findAll().stream().map(this::mapToResponseByAdmin).toList();
@@ -54,6 +53,7 @@ public class CourtOrderService {
                 .orderDate(dto.orderDate())
                 .startHour(dto.startHour())
                 .endHour(dto.endHour())
+                .status(OrderStatus.CHECK_IN)
                 .adminId(adminId)
                 .build();
         return getCreatedOrderRes(order, dto.courtIds(), dto.productDetails(), priceAtBooking);
@@ -67,6 +67,7 @@ public class CourtOrderService {
                     .orderDate(dto.orderDate())
                     .startHour(dto.startHour())
                     .endHour(dto.endHour())
+                    .status(OrderStatus.WAITING_FOR_PAYMENT)
                     .guestName(dto.guestName())
                     .guestEmail(dto.guestEmail())
                     .guestPhoneNumber(dto.guestPhoneNumber())
@@ -76,6 +77,7 @@ public class CourtOrderService {
                     .orderDate(dto.orderDate())
                     .startHour(dto.startHour())
                     .endHour(dto.endHour())
+                    .status(OrderStatus.WAITING_FOR_PAYMENT)
                     .memberId(memberId)
                     .build();
         }
@@ -146,7 +148,6 @@ public class CourtOrderService {
         OrderContract.CalculateDepositRes calculateResult = calculateDepositValue(id);
         CourtOrder courtOrder = courtOrderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Court order not found"));
-//        courtOrder.setStatus(OrderStatus.Ordered);
 
         OrderInvoice invoice = new OrderInvoice();
         invoice.setDepositAmount(calculateResult.depositAmount());
@@ -167,7 +168,6 @@ public class CourtOrderService {
         }
         productApi.decreaseQuantity(details);
 
-//        courtOrder.setStatus(OrderStatus.Completed);
         OrderInvoice invoice = new OrderInvoice();
         invoice.setTotalAmount(calculateResult.totalAmount());
         invoice.setGivenAmount(dto.givenAmount());
@@ -175,6 +175,8 @@ public class CourtOrderService {
         invoice.setPaymentMethod(dto.paymentMethod());
         courtOrder.setOrderInvoice(invoice);
         invoiceRepository.save(invoice);
+
+        eventPublisher.publishEvent(new OrderContract.CheckOutEvent(courtOrder.getCourtOrderId()));
     }
 
     public Map<Integer, List<OrderContract.CourtRes>> getAllCourtSchedule(OrderContract.CourtReq dto) {
@@ -186,15 +188,7 @@ public class CourtOrderService {
     public void cancelOrder(Integer id) {
         CourtOrder courtOrder = courtOrderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Court order not found"));
-        boolean isUnder24Hours = Duration
-                .between(LocalDateTime.now(), LocalDateTime.of(courtOrder.getOrderDate(), courtOrder.getStartHour()))
-                .toHours() < 24;
-
-        if (!isUnder24Hours) {
-            zaloPayService.handleRefund(id, courtOrder.getOrderInvoice().getDepositAmount());
-        } else {
-            throw new RuntimeException("Cannot cancel order within 24 hours");
-        }
+        courtOrder.setStatus(OrderStatus.CANCELED);
     }
 
     private BigDecimal calculateCourtTotalBeforeDiscount(CourtOrder courtOrder) {
@@ -257,7 +251,6 @@ public class CourtOrderService {
         }
         List<CourtOrderDetail> courtOrderDetails = courtIds.stream().map(courtId -> mapToCourtOrderDetails(courtId, priceAtBooking)).toList();
         for (CourtOrderDetail detail : courtOrderDetails) { order.addCourtOrderDetail(detail); }
-        order.setStatus(OrderStatus.WAITING_FOR_PAYMENT);
         CourtOrder saved = courtOrderRepository.save(order);
         return new OrderContract.CreatedOrderRes(saved.getCourtOrderId());
     }

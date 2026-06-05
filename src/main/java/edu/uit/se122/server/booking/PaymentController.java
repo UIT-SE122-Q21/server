@@ -23,11 +23,4 @@ public class PaymentController {
     public ResponseEntity<ZaloPayContract.CallbackStatusRes> handlePaymentCallback(@RequestBody ZaloPayContract.Callback callback) {
         return ResponseEntity.ok(zaloPayService.handlePaymentCallback(callback));
     }
-
-    @PostMapping("/refund/{id}")
-    public ResponseEntity<Object> handleRefundCallback(@PathVariable Integer id, @RequestBody BigDecimal amount) {
-        zaloPayService.handleRefund(id, amount);
-        return ResponseEntity.ok(Map.of("message", "Hoàn tiền thành công"));
-    }
-
 }

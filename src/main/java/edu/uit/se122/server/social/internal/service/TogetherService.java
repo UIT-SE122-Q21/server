@@ -5,19 +5,16 @@ import edu.uit.se122.server.social.TogetherContract;
 import edu.uit.se122.server.social.internal.entity.CourtOrderCache;
 import edu.uit.se122.server.social.internal.entity.MemberCache;
 import edu.uit.se122.server.social.internal.entity.Together;
-import edu.uit.se122.server.social.internal.entity.TogetherMember;
 import edu.uit.se122.server.social.internal.repository.CourtOrderCacheRepository;
 import edu.uit.se122.server.social.internal.repository.MemberCacheRepository;
-import edu.uit.se122.server.social.internal.repository.TogetherMemberRepository;
 import edu.uit.se122.server.social.internal.repository.TogetherRepository;
+import edu.uit.se122.server.social.internal.state.TogetherState;
+import edu.uit.se122.server.social.internal.state.TogetherStateFactory;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +23,7 @@ public class TogetherService {
     private final TogetherRepository togetherRepository;
     private final CourtOrderCacheRepository courtOrderCacheRepository;
     private final MemberCacheRepository memberCacheRepository;
-    private final TogetherMemberRepository togetherMemberRepository;
+    private final TogetherStateFactory stateFactory;
 
     public List<TogetherContract.Res> getAll() {
         return togetherRepository.findAll().stream().map(this::mapToDTO).toList();
@@ -37,44 +34,39 @@ public class TogetherService {
                 .orElseThrow(() -> new RuntimeException("Together not found"));
     }
 
-    public void create(TogetherContract.Req dto) {
+    public void create(Integer courtOrderId, TogetherContract.Req dto) {
         Together together = new Together();
         together.setContent(dto.content());
         together.setNumOfPlayersPrefix(dto.numOfPlayersPrefix());
-        together.setStatus(TogetherStatus.Pending);
+        together.setStatus(TogetherStatus.PENDING);
+        together.setCourtOrderId(courtOrderId);
         togetherRepository.save(together);
     }
 
     public void join(Integer togetherId, Integer memberId) {
         Together together = togetherRepository.findById(togetherId)
                 .orElseThrow(() -> new RuntimeException("Together not found"));
-
-        if (!together.getStatus().equals(TogetherStatus.Pending)) {
-            throw new RuntimeException("Together is not available");
-        }
-
         MemberCache member = memberCacheRepository.findById(memberId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
+        TogetherState currentState = stateFactory.getState(together.getStatus());
 
-        if (!togetherMemberRepository.checkMemberInTogether(togetherId, memberId)) {
-            TogetherMember togetherMember = new TogetherMember();
-            togetherMember.setTogether(together);
-            togetherMember.setMember(member);
-            together.getTogetherMembers().add(togetherMember);
-            together.setNumOfPlayersJoined(together.getNumOfPlayersJoined() + 1);
-            if (Objects.equals(together.getNumOfPlayersJoined(), together.getNumOfPlayersPrefix())) {
-                together.setStatus(TogetherStatus.Assemble);
-            }
-        }
+        currentState.joinTogether(together, member);
+        togetherRepository.save(together);
     }
 
-    public void plan(Integer togetherId) {
+    public void planManually(Integer togetherId) {
         Together together = togetherRepository.findById(togetherId)
                 .orElseThrow(() -> new RuntimeException("Together not found"));
-        together.setStatus(TogetherStatus.Planned);
+        together.setStatus(TogetherStatus.PLANNED);
     }
 
-    public void delete(Integer id) { togetherRepository.deleteById(id); }
+    public void cancel(Integer togetherId) {
+        Together together = togetherRepository.findById(togetherId)
+                .orElseThrow(() -> new RuntimeException("Together not found"));
+        TogetherState currentState = stateFactory.getState(together.getStatus());
+        currentState.cancelTogether(together);
+        togetherRepository.save(together);
+    }
 
     private TogetherContract.Res mapToDTO(Together entity) {
         List<Integer> memberIds = entity.getTogetherMembers().stream()

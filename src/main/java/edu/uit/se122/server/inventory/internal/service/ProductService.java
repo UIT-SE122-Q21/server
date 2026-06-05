@@ -52,7 +52,12 @@ public class ProductService {
         product.setStatus(ProductStatus.Available);
         product.setQuantity(0);
         product.setMinQuantity(0);
-        ProductDetail detail = mapToDetail(dto.detail());
+        ProductDetail detail = new ProductDetail();
+        detail.setBarcode(dto.detail().barcode());
+        detail.setCapacity(dto.detail().capacity());
+        detail.setUnit(dto.detail().unit());
+        detail.setUnitPrice(dto.detail().unitPrice());
+        detail.setSaleType(dto.detail().saleType());
         product.addDetail(detail);
         Product saved = productRepository.save(product);
 
@@ -96,26 +101,21 @@ public class ProductService {
             ProductDetail detail;
             if (dto.productDetailId() != null && existingDetailsMap.containsKey(dto.productDetailId())) {
                 detail = existingDetailsMap.get(dto.productDetailId());
-                detail.setBarcode(dto.detail().barcode());
-                detail.setCapacity(dto.detail().capacity());
-                detail.setUnit(dto.detail().unit());
-                detail.setUnitPrice(dto.detail().unitPrice());
-                detail.setSaleType(dto.detail().saleType());
+                detail.setBarcode(dto.barcode());
+                detail.setCapacity(dto.capacity());
+                detail.setUnit(dto.unit());
+                detail.setUnitPrice(dto.unitPrice());
+                detail.setSaleType(dto.saleType());
             } else {
-                detail = mapToDetail(dto.detail());
+                detail = new ProductDetail();
+                detail.setBarcode(dto.barcode());
+                detail.setCapacity(dto.capacity());
+                detail.setUnit(dto.unit());
+                detail.setUnitPrice(dto.unitPrice());
+                detail.setSaleType(dto.saleType());
                 entity.addDetail(detail);
             }
         }
-    }
-
-    private ProductDetail mapToDetail(ProductContract.DetailReq dto) {
-        ProductDetail detail = new ProductDetail();
-        detail.setBarcode(dto.barcode());
-        detail.setCapacity(dto.capacity());
-        detail.setUnit(dto.unit());
-        detail.setUnitPrice(dto.unitPrice());
-        detail.setSaleType(dto.saleType());
-        return detail;
     }
 
     private ProductContract.Res mapToDTO(Product entity) {

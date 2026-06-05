@@ -34,7 +34,15 @@ public interface ProductContract {
     record CreateReq(
             String productName,
             Integer categoryId,
-            DetailReq detail
+            DetailCreateReq detail
+    ) {}
+
+    record DetailCreateReq(
+            String barcode,
+            Integer capacity,
+            String unit,
+            BigDecimal unitPrice,
+            SaleType saleType
     ) {}
 
     record UpdateReq(
@@ -46,17 +54,13 @@ public interface ProductContract {
             Integer quantity
     ) {}
 
-    record DetailReq(
+    record DetailUpdateReq(
+            Integer productDetailId,
             String barcode,
             Integer capacity,
             String unit,
             BigDecimal unitPrice,
             SaleType saleType
-    ) {}
-
-    record DetailUpdateReq(
-            Integer productDetailId,
-            DetailReq detail
     ) {}
 
     record CreatedEvent(

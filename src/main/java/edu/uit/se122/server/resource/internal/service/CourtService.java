@@ -69,6 +69,7 @@ public class CourtService {
                 entity.getCourtId(),
                 entity.getNumOfIndex(),
                 entity.getMaintenance(),
+                priceManager.getCurrentCourtPrice().getUnitPrice(),
                 entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );

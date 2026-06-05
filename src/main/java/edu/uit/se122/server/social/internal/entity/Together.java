@@ -28,7 +28,7 @@ public class Together {
 
     private String content;
     private Integer numOfPlayersPrefix = 0;
-    private Integer numOfPlayersJoined = 0;
+    private Integer numOfPlayersJoined = 1;
 
     @CreatedDate
     @Column(updatable = false)

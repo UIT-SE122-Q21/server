@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/together")
+@RequestMapping("/api/member/together")
 @RequiredArgsConstructor
 public class TogetherController {
     private final TogetherService togetherService;
@@ -25,9 +25,9 @@ public class TogetherController {
         return ResponseEntity.ok(togetherService.getById(id));
     }
 
-    @PostMapping
-    public ResponseEntity<Object> create(@RequestBody TogetherContract.Req dto) {
-        togetherService.create(dto);
+    @PostMapping("/{courtOrderId}")
+    public ResponseEntity<Object> create(@PathVariable Integer courtOrderId, @RequestBody TogetherContract.Req dto) {
+        togetherService.create(courtOrderId, dto);
         return ResponseEntity.ok(Map.of("message", "Thêm mới thành công"));
     }
 
@@ -37,15 +37,15 @@ public class TogetherController {
         return ResponseEntity.ok(Map.of("message", "Tham gia cuộc hẹn thành công"));
     }
 
-    @PutMapping("/{togetherId}/plan")
-    public ResponseEntity<Object> plan(@PathVariable Integer togetherId) {
-        togetherService.plan(togetherId);
+    @PutMapping("/{togetherId}/plan-manually")
+    public ResponseEntity<Object> planManually(@PathVariable Integer togetherId) {
+        togetherService.planManually(togetherId);
         return ResponseEntity.ok(Map.of("message", "Đã chốt hẹn"));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        togetherService.delete(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Object> cancel(@PathVariable Integer id) {
+        togetherService.cancel(id);
+        return ResponseEntity.ok(Map.of("message", "Hủy cuộc hẹn thành công"));
     }
 }
