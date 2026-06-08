@@ -1,6 +1,7 @@
 package edu.uit.se122.server.social.internal.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import edu.uit.se122.server.common.enums.MessageType;
 import edu.uit.se122.server.promotion.internal.entity.Promotion;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,17 +10,21 @@ import lombok.ToString;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "ChatDetail")
+@Document(collection = "chat_detail")
 @Data
 @EntityListeners(AuditingEntityListener.class)
 public class ChatDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer chatDetailId;
+
+    @Indexed
+    private Integer togetherId;
 
     private String content;
 
@@ -29,5 +34,7 @@ public class ChatDetail {
 
     @CreatedBy
     @Column(updatable = false)
-    private String memberId;
+    private Integer memberId;
+
+    private MessageType type;
 }

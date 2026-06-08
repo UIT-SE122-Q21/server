@@ -1,13 +1,45 @@
 services:
-  db:
+  postgres:
     image: postgres:latest
-    container_name: SmashIt_DB
+    container_name: SmashIt_Postgres
     environment:
       POSTGRES_USER: ${POSTGRES_USERNAME:-username_of_postgres_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password_of_postgres_user}
       POSTGRES_DB: postgres
     ports:
       - "5432:5432"
+
+  mongodb:
+    image: mongo:latest
+    container_name: SmashIt_Mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: Qwerty123456!
+    volumes:
+      - mongo_data:/data/db
+
+  rabbitmq:
+    image: rabbitmq:3.13-management
+    container_name: SmashIt_RabbitMQ
+    ports:
+      # Cổng AMQP chuẩn (Dùng cho giao tiếp nội bộ giữa Spring Boot và RabbitMQ)
+      - "5672:5672"
+      # Cổng Giao diện Quản lý (RabbitMQ Management UI - xem trên trình duyệt)
+      - "15672:15672"
+      # 🔑 CỔNG STOMP (Bắt buộc phải mở để Spring WebSocket kết nối Relay)
+      - "61613:61613"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - badminton-network
+    # Tự động kích hoạt plugin STOMP và Management UI ngay khi container khởi động
+    command: >
+      sh -c "rabbitmq-plugins enable --offline rabbitmq_management rabbitmq_stomp && rabbitmq-server"
 
   backend:
     build: .
@@ -23,4 +55,25 @@ services:
       - SPRING_MAIL_USERNAME=${BREVO_LOGIN:-email_username}
       - SPRING_MAIL_PASSWORD=${BREVO_PASSWORD:-email_password}
       - SPRING_MAIL_SENDER=${BREVO_EMAIL:-email_sender}
+      - SPRING_MONGODB_HOST=${MONGO_HOST:-mongodb}
+      - SPRING_MONGODB_PORT=${MONGO_PORT:-27017}
+      - SPRING_MONGODB_DATABASE=${MONGO_DB:-mongodb_database}
+      - SPRING_MONGODB_USERNAME=${MONGO_USER:-admin}
+      - SPRING_MONGODB_PASSWORD=${MONGO_PASS:-password_of_mongo_user}
       - APP_JWT_SECRET=${JWT_SECRET:-jwt_secret}
+      - APP_ZALO-PAY_APP-ID=${ZALOPAY_APP_ID:-zalopay_app_id}
+      - APP_ZALO-PAY_KEY1=${ZALOPAY_KEY1:-zalopay_key1}
+      - APP_ZALO-PAY_KEY2=${ZALOPAY_KEY2:-zalopay_key2}
+      - APP_ZALO-PAY_CREATE-URL=${ZALOPAY_CREATE_URL:-zalopay_create_url}
+      - APP_ZALO-PAY_REFUND-URL=${ZALOPAY_REFUND_URL:-zalopay_refund_url}
+      - APP_ZALO-PAY_QUERY-REFUND-URL=${ZALOPAY_QUERY_REFUND_URL:-zalopay_query_refund_url}
+      - APP_ZALO-PAY_CALLBACK-URL=${ZALOPAY_CALLBACK_URL:-zalopay_callback_url}
+      - APP_ZALO-PAY_RETURN-URL=${ZALOPAY_RETURN_URL:-zalopay_return_url}
+
+volumes:
+  mongo_data:
+  rabbitmq_data:
+
+networks:
+  badminton-network:
+    driver: bridge

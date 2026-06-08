@@ -37,7 +37,8 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
-                                "/webjars/**"
+                                "/webjars/**",
+                                "/ws-chat/**"
                         ).permitAll()
                         .requestMatchers("/api/admin/**").hasRole(LoginRole.ADMIN.toString()) // Chỉ Admin mới vào được
                         .anyRequest().authenticated() // Các API khác cần phải có token hợp lệ

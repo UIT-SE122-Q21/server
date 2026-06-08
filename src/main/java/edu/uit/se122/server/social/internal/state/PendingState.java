@@ -1,6 +1,7 @@
 package edu.uit.se122.server.social.internal.state;
 
 import edu.uit.se122.server.common.enums.TogetherStatus;
+import edu.uit.se122.server.social.internal.entity.ChatDetail;
 import edu.uit.se122.server.social.internal.entity.MemberCache;
 import edu.uit.se122.server.social.internal.entity.Together;
 import edu.uit.se122.server.social.internal.entity.TogetherMember;
@@ -45,5 +46,20 @@ public class PendingState implements TogetherState {
     public void cancelTogether(Together together) {
         together.setStatus(TogetherStatus.CANCELED);
         log.info("Together {} is canceled", together.getTogetherId());
+    }
+
+    @Override
+    public ChatDetail saveChatMessage(Together together, Integer memberId, String message) {
+        throw new IllegalStateException("Together is not planned yet");
+    }
+
+    @Override
+    public ChatDetail joinChat(Together together, Integer memberId, String message) {
+        throw new IllegalStateException("Together is not planned yet");
+    }
+
+    @Override
+    public ChatDetail leaveChat(Together together, Integer memberId, String message) {
+        throw new IllegalStateException("Together is not planned yet");
     }
 }

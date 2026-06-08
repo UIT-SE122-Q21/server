@@ -25,7 +25,7 @@ public interface TogetherContract {
             Integer numOfPlayersPrefix
     ) {}
 
-    record JoinReq(
-            Integer memberId
+    record ChatMessageReq(
+            String content
     ) {}
 }
